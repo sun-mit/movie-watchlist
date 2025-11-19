@@ -6,6 +6,7 @@ import {
     SentimentDissatisfied as NoResultsIcon,
     Star as StarIcon,
 } from "@mui/icons-material";
+import { motion } from "framer-motion";
 
 interface Movie {
     id: number;
@@ -96,10 +97,34 @@ const SearchPage: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-gray-900 text-white p-6">
-            <h1 className="text-3xl font-bold mb-8 flex items-center gap-2 justify-center">
-                <MovieIcon fontSize="large" />
-                Movie Search
-            </h1>
+            <div className="flex justify-center">
+                <motion.div
+                    className="flex items-center gap-3 mb-8"
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8 }}
+                >
+                    <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{
+                            duration: 6,
+                            repeat: Infinity,
+                            ease: "linear",
+                        }}
+                    >
+                        <MovieIcon style={{ fontSize: 48 }} />
+                    </motion.div>
+
+                    <motion.h1
+                        className="text-4xl font-bold bg-clip-text text-transparent 
+            bg-gradient-to-r from-blue-400 via-purple-400 to-red-400"
+                        animate={{ scale: [1, 1.1, 1] }}
+                        transition={{ duration: 1.8, repeat: Infinity }}
+                    >
+                        Movie Search
+                    </motion.h1>
+                </motion.div>
+            </div>
 
             {/* Centered search bar with icon */}
             <div className="flex justify-center mb-10">
@@ -117,7 +142,6 @@ const SearchPage: React.FC = () => {
                     />
                 </div>
             </div>
-
             {/* No results animation */}
             {filteredMovies.length === 0 ? (
                 <div className="flex flex-col items-center justify-center mt-20 animate-fade-in">
