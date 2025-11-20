@@ -1,132 +1,75 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import {
-    Movie as MovieIcon,
+    searchMovies,
+    getPopularMovies,
+    getTopRatedMovies,
+} from "../api/tmdbApi";
+import {
     Search as SearchIcon,
     SentimentDissatisfied as NoResultsIcon,
-    Star as StarIcon,
 } from "@mui/icons-material";
-import { motion } from "framer-motion";
 
-interface Movie {
-    id: number;
-    title: string;
-    year: number;
-    poster: string;
-    rating?: number;
-}
-
-const movies: Movie[] = [
-    {
-        id: 1,
-        title: "The Great Adventure",
-        year: 2025,
-        poster: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=400&auto=format&fit=crop",
-        rating: 4.5,
-    },
-    {
-        id: 2,
-        title: "Space Odyssey",
-        year: 2024,
-        poster: "https://images.unsplash.com/photo-1535223289827-42f1e9919769?q=80&w=400&auto=format&fit=crop",
-        rating: 4.2,
-    },
-    {
-        id: 3,
-        title: "Mystery Island",
-        year: 2023,
-        poster: "https://images.unsplash.com/photo-1517602302552-471fe67acf66?q=80&w=400&auto=format&fit=crop",
-        rating: 3.8,
-    },
-    {
-        id: 4,
-        title: "City of Shadows",
-        year: 2025,
-        poster: "https://images.unsplash.com/photo-1497034825429-c343d7c6a68f?q=80&w=400&auto=format&fit=crop",
-        rating: 4.7,
-    },
-    {
-        id: 5,
-        title: "Ocean’s Secret",
-        year: 2024,
-        poster: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=400&auto=format&fit=crop",
-        rating: 4.0,
-    },
-    {
-        id: 6,
-        title: "The Last Horizon",
-        year: 2023,
-        poster: "https://images.unsplash.com/photo-1478720568477-152d9b164e26?q=80&w=400&auto=format&fit=crop",
-        rating: 3.9,
-    },
-    {
-        id: 7,
-        title: "Neon Nights",
-        year: 2025,
-        poster: "https://images.unsplash.com/photo-1517638851339-4a0a1b06f68e?q=80&w=400&auto=format&fit=crop",
-        rating: 4.6,
-    },
-    {
-        id: 8,
-        title: "Forgotten Realms",
-        year: 2024,
-        poster: "https://images.unsplash.com/photo-1505685296765-3a2736de412f?q=80&w=400&auto=format&fit=crop",
-        rating: 4.1,
-    },
-    {
-        id: 9,
-        title: "Rogue Planet",
-        year: 2023,
-        poster: "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?q=80&w=400&auto=format&fit=crop",
-        rating: 3.7,
-    },
-    {
-        id: 10,
-        title: "Eternal Flame",
-        year: 2025,
-        poster: "https://images.unsplash.com/photo-1478720568477-152d9b164e26?q=80&w=400&auto=format&fit=crop",
-        rating: 4.8,
-    },
-];
+// TMDB API returns different field names, so adapt as needed
+import { MovieCard } from "../components/MovieCard";
 
 const SearchPage: React.FC = () => {
     const [search, setSearch] = useState("");
-    const filteredMovies = movies.filter((movie) =>
-        movie.title.toLowerCase().includes(search.toLowerCase())
-    );
+
+    // Top rated movies query
+    const {
+        data: topRatedData,
+        isLoading: isTopRatedLoading,
+        isError: isTopRatedError,
+        error: topRatedError,
+    } = useQuery({
+        queryKey: ["topRatedMovies"],
+        queryFn: getTopRatedMovies,
+        enabled: !search,
+    });
+
+    // Search query
+    const {
+        data: searchData,
+        isLoading: isSearchLoading,
+        isError: isSearchError,
+        error: searchError,
+    } = useQuery({
+        queryKey: ["searchMovies", search],
+        queryFn: () =>
+            search ? searchMovies(search) : Promise.resolve({ results: [] }),
+        enabled: !!search,
+    });
+
+    // Popular movies query
+    const {
+        data: popularData,
+        isLoading: isPopularLoading,
+        isError: isPopularError,
+        error: popularError,
+    } = useQuery({
+        queryKey: ["popularMovies"],
+        queryFn: getPopularMovies,
+        enabled: !search,
+    });
+
+    type TMDBMovie = {
+        id: number;
+        title: string;
+        poster_path: string | null;
+        release_date: string;
+        vote_average: number;
+    };
+
+    const popularMovies: TMDBMovie[] =
+        popularData && popularData.results ? popularData.results : [];
+    const topRatedMovies: TMDBMovie[] =
+        topRatedData && topRatedData.results ? topRatedData.results : [];
+    const searchMoviesList: TMDBMovie[] =
+        searchData && searchData.results ? searchData.results : [];
 
     return (
         <div className="min-h-screen bg-gray-900 text-white p-6">
-            <div className="flex justify-center">
-                <motion.div
-                    className="flex items-center gap-3 mb-8"
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8 }}
-                >
-                    <motion.div
-                        animate={{ rotate: 360 }}
-                        transition={{
-                            duration: 6,
-                            repeat: Infinity,
-                            ease: "linear",
-                        }}
-                    >
-                        <MovieIcon style={{ fontSize: 48 }} />
-                    </motion.div>
-
-                    <motion.h1
-                        className="text-4xl font-bold bg-clip-text text-transparent 
-            bg-gradient-to-r from-blue-400 via-purple-400 to-red-400"
-                        animate={{ scale: [1, 1.1, 1] }}
-                        transition={{ duration: 1.8, repeat: Infinity }}
-                    >
-                        Movie Search
-                    </motion.h1>
-                </motion.div>
-            </div>
-
-            {/* Centered search bar with icon */}
             <div className="flex justify-center mb-10">
                 <div className="relative w-full max-w-xl">
                     <span className="absolute left-4 top-1/2 -translate-y-1/2 text-blue-400">
@@ -142,77 +85,133 @@ const SearchPage: React.FC = () => {
                     />
                 </div>
             </div>
-            {/* No results animation */}
-            {filteredMovies.length === 0 ? (
-                <div className="flex flex-col items-center justify-center mt-20 animate-fade-in">
-                    <NoResultsIcon
-                        style={{ fontSize: 80 }}
-                        className="text-gray-500 mb-4 animate-bounce"
-                    />
-                    <p className="text-2xl text-gray-400 animate-fade-in">
-                        No movies found
-                    </p>
+
+            {/* Section Title */}
+            {search ? (
+                <div className="flex justify-between items-center mb-6">
+                    <h1 className="text-2xl font-bold tracking-tight">
+                        Search Results
+                    </h1>
                 </div>
             ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
-                    {filteredMovies.map((movie) => (
-                        <Link
-                            key={movie.id}
-                            to={`/movie/${movie.id}`}
-                            className="bg-gray-900 rounded-2xl overflow-hidden shadow-xl transform hover:scale-105 hover:shadow-red-700/40 transition-all duration-300 relative group animate-fade-in border border-gray-800"
-                            style={{
-                                aspectRatio: "2/3",
-                                minHeight: "420px",
-                                maxHeight: "560px",
-                                display: "flex",
-                                flexDirection: "column",
-                            }}
-                        >
-                            <div
-                                className="relative"
-                                style={{
-                                    flex: "1 1 auto",
-                                    display: "flex",
-                                    flexDirection: "column",
-                                }}
-                            >
-                                <img
-                                    src={movie.poster}
-                                    alt={movie.title}
-                                    className="w-full object-cover group-hover:opacity-90"
-                                    style={{
-                                        height: "400px",
-                                        aspectRatio: "2/3",
-                                        transition: "opacity 0.5s",
-                                        borderRadius: "0.75rem 0.75rem 0 0",
-                                    }}
+                <>
+                    <div className="flex justify-between items-center mb-6">
+                        <h1 className="text-2xl font-bold tracking-tight">
+                            Popular Movies
+                        </h1>
+                    </div>
+                    {/* Popular Movies Grid */}
+                    {isPopularLoading ? (
+                        <div className="text-center mt-10 text-blue-400 animate-pulse">
+                            Loading...
+                        </div>
+                    ) : isPopularError ? (
+                        <div className="text-center mt-10 text-red-400">
+                            Error:{" "}
+                            {popularError instanceof Error
+                                ? popularError.message
+                                : "Failed to fetch popular movies."}
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8 mb-12">
+                            {popularMovies.map((movie: TMDBMovie) => (
+                                <MovieCard
+                                    id={movie.id}
+                                    title={movie.title}
+                                    poster_path={movie.poster_path}
+                                    release_date={movie.release_date}
+                                    vote_average={movie.vote_average}
+                                    to={`/movie/${movie.id}`}
+                                    color="blue"
                                 />
-                                {/* Year overlay */}
-                                <div className="absolute top-3 left-3 bg-black bg-opacity-60 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-md">
-                                    {movie.year}
-                                </div>
+                            ))}
+                        </div>
+                    )}
+                    <div className="flex justify-between items-center mb-6 mt-8">
+                        <h1 className="text-2xl font-bold tracking-tight">
+                            Top Rated Movies
+                        </h1>
+                        <span className="text-yellow-400 font-semibold">
+                            Most Rating
+                        </span>
+                    </div>
+                    {/* Top Rated Movies Grid */}
+                    {isTopRatedLoading ? (
+                        <div className="text-center mt-10 text-blue-400 animate-pulse">
+                            Loading...
+                        </div>
+                    ) : isTopRatedError ? (
+                        <div className="text-center mt-10 text-red-400">
+                            Error:{" "}
+                            {topRatedError instanceof Error
+                                ? topRatedError.message
+                                : "Failed to fetch top rated movies."}
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8 mb-12">
+                            {topRatedMovies.map((movie: TMDBMovie) => (
+                                <MovieCard
+                                    id={movie.id}
+                                    title={movie.title}
+                                    poster_path={movie.poster_path}
+                                    release_date={movie.release_date}
+                                    vote_average={movie.vote_average}
+                                    to={`/movie/${movie.id}`}
+                                    color="yellow"
+                                />
+                            ))}
+                        </div>
+                    )}
+                </>
+            )}
+
+            {/* Search Results Loading/Error/No Results/Movie Grid */}
+            {search && (
+                <>
+                    {isSearchLoading && (
+                        <div className="text-center mt-20 text-blue-400 animate-pulse">
+                            Loading...
+                        </div>
+                    )}
+                    {isSearchError && (
+                        <div className="text-center mt-20 text-red-400">
+                            Error:{" "}
+                            {searchError instanceof Error
+                                ? searchError.message
+                                : "Failed to fetch movies."}
+                        </div>
+                    )}
+                    {!isSearchLoading &&
+                        !isSearchError &&
+                        searchMoviesList.length === 0 && (
+                            <div className="flex flex-col items-center justify-center mt-20 animate-fade-in">
+                                <NoResultsIcon
+                                    style={{ fontSize: 80 }}
+                                    className="text-gray-500 mb-4 animate-bounce"
+                                />
+                                <p className="text-2xl text-gray-400 animate-fade-in">
+                                    No movies found
+                                </p>
                             </div>
-                            <div
-                                className="px-4 py-3 flex flex-col gap-2 bg-gradient-to-t from-gray-900/90 to-gray-900/60"
-                                style={{ borderRadius: "0 0 0.75rem 0.75rem" }}
-                            >
-                                <h2 className="text-lg font-semibold group-hover:text-red-400 transition-colors duration-200 truncate">
-                                    {movie.title}
-                                </h2>
-                                {/* Rating star */}
-                                <div className="flex items-center gap-1 mt-1">
-                                    <StarIcon
-                                        className="text-yellow-400"
-                                        fontSize="small"
+                        )}
+                    {!isSearchLoading &&
+                        !isSearchError &&
+                        searchMoviesList.length > 0 && (
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
+                                {searchMoviesList.map((movie: TMDBMovie) => (
+                                    <MovieCard
+                                        id={movie.id}
+                                        title={movie.title}
+                                        poster_path={movie.poster_path}
+                                        release_date={movie.release_date}
+                                        vote_average={movie.vote_average}
+                                        to={`/movie/${movie.id}`}
+                                        color="red"
                                     />
-                                    <span className="text-base text-gray-300 font-medium">
-                                        {movie.rating?.toFixed(1)}
-                                    </span>
-                                </div>
+                                ))}
                             </div>
-                        </Link>
-                    ))}
-                </div>
+                        )}
+                </>
             )}
             {/* Fade-in animation styles */}
             <style>{`
