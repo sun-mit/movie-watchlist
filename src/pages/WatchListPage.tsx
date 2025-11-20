@@ -89,7 +89,7 @@ const Watchlist: React.FC = () => {
     }
 
     return (
-        <div className="min-h-screen w-full relative flex flex-col items-center justify-start text-white font-sans">
+        <div className="min-h-screen w-full relative flex flex-col items-center justify-start text-white font-sans pt-24">
             {/* Vibrant Gradient & Glassmorphism Background */}
             <div className="absolute inset-0 -z-10 bg-gradient-to-br from-blue-900 via-purple-900 to-pink-700 opacity-90" />
             <div className="absolute inset-0 -z-10 backdrop-blur-2xl" />

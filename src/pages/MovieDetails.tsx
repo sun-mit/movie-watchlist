@@ -50,7 +50,7 @@ const MovieDetails: React.FC = () => {
     });
 
     return (
-        <div className="min-h-screen w-full relative flex flex-col text-white font-sans p-6">
+        <div className="min-h-screen w-full relative flex flex-col text-white font-sans p-6 pt-24">
             {/* Vibrant Gradient & Glassmorphism Background */}
             <div className="absolute inset-0 -z-10 bg-gradient-to-br from-blue-900 via-purple-900 to-pink-700 opacity-90" />
             <div className="absolute inset-0 -z-10 backdrop-blur-2xl" />
