@@ -4,10 +4,12 @@ import Navbar from "./components/Navbar";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 // Lazy load pages
+const HomePage = lazy(() => import("./pages/HomePage"));
 const SearchPage = lazy(() => import("./pages/SearchPage"));
 const MovieDetails = lazy(() => import("./pages/MovieDetails"));
 const Watchlist = lazy(() => import("./pages/WatchListPage"));
 const Login = lazy(() => import("./pages/Login"));
+const SignUp = lazy(() => import("./pages/SignUp"));
 
 const App: React.FC = () => {
     return (
@@ -22,10 +24,19 @@ const App: React.FC = () => {
             >
                 <Routes>
                     {/* Public */}
-                    <Route path="/" element={<SearchPage />} />
+                    <Route path="/" element={<HomePage />} />
                     <Route path="/login" element={<Login />} />
+                    <Route path="/signup" element={<SignUp />} />
 
                     {/* Protected */}
+                    <Route
+                        path="/search"
+                        element={
+                            <ProtectedRoute>
+                                <SearchPage />
+                            </ProtectedRoute>
+                        }
+                    />
                     <Route
                         path="/movie/:id"
                         element={
