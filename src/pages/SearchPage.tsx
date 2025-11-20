@@ -69,7 +69,13 @@ const SearchPage: React.FC = () => {
         searchData && searchData.results ? searchData.results : [];
 
     return (
-        <div className="min-h-screen bg-gray-900 text-white p-6">
+        <div className="min-h-screen w-full relative flex flex-col text-white font-sans p-6">
+            {/* Vibrant Gradient & Glassmorphism Background */}
+            <div className="absolute inset-0 -z-10 bg-gradient-to-br from-blue-900 via-purple-900 to-pink-700 opacity-90" />
+            <div className="absolute inset-0 -z-10 backdrop-blur-2xl" />
+            {/* Decorative Glow */}
+            <div className="absolute top-0 left-0 w-80 h-80 bg-blue-500/30 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute bottom-0 right-0 w-80 h-80 bg-pink-500/20 rounded-full blur-3xl pointer-events-none" />
             <div className="flex justify-center mb-10">
                 <div className="relative w-full max-w-xl">
                     <span className="absolute left-4 top-1/2 -translate-y-1/2 text-blue-400">

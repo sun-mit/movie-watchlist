@@ -1,36 +1,35 @@
-// src/pages/Login.tsx
+// src/pages/SignUp.tsx
 import React, { useState } from "react";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { MdArrowForward } from "react-icons/md";
-import { MdMovie } from "react-icons/md";
-import CustomButton from "../components/CustomButton";
-import bgImage from "../assets/bgImg.png";
 import { useNavigate } from "react-router-dom";
 import useAuthStore from "../store/authStore";
+import { MdArrowForward, MdMovie } from "react-icons/md";
+import stageBg from "../assets/bgImgSignUp.png";
+import CustomButton from "../components/CustomButton";
 
-const Login: React.FC = () => {
-    const { login } = useAuthStore();
+const SignUp: React.FC = () => {
+    const { register } = useAuthStore();
     const navigate = useNavigate();
 
+    const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
-    const [showPassword, setShowPassword] = useState(false);
 
-    const handleLogin = (e?: React.FormEvent) => {
+    const bgImage = stageBg;
+
+    const handleSignUp = (e?: React.FormEvent) => {
         if (e) e.preventDefault();
-        if (!email || !password) {
-            setError("Please enter both email and password.");
+        if (!name || !email || !password) {
+            setError("Please fill all fields.");
             return;
         }
-
-        const success = login({ email, password });
+        const success = register({ name, email, password });
         if (!success) {
-            setError("Invalid credentials or user not registered.");
+            setError("Email already exists. Try logging in.");
             return;
         }
         setError("");
-        navigate("/search"); // Navigate to search page after login
+        navigate("/search"); // Go to search after signup
     };
 
     return (
@@ -48,24 +47,24 @@ const Login: React.FC = () => {
             />
             <div className="absolute inset-0 z-0 bg-gradient-to-b from-black/60 via-transparent to-black/90" />
 
-            {/* Login Card */}
+            {/* Sign Up Card */}
             <div className="relative z-10 w-full max-w-[520px] px-4">
                 <div className="bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl p-8 md:p-10 relative overflow-hidden group">
                     {/* Decorative Glow */}
-                    <div className="absolute -top-12 -left-12 w-40 h-40 bg-blue-600/20 rounded-full blur-3xl pointer-events-none group-hover:bg-blue-600/30 transition-colors duration-700" />
+                    <div className="absolute -top-12 -left-12 w-40 h-40 bg-purple-600/20 rounded-full blur-3xl pointer-events-none group-hover:bg-purple-600/30 transition-colors duration-700" />
 
                     {/* Header */}
                     <div className="mb-8 text-center relative">
                         <div className="flex justify-center mb-4">
-                            <div className="h-12 w-12 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-900/50">
+                            <div className="h-12 w-12 bg-gradient-to-br from-purple-600 to-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-900/50">
                                 <MdMovie className="text-white text-3xl" />
                             </div>
                         </div>
                         <h1 className="text-3xl font-bold tracking-tight mb-2">
-                            Welcome Back
+                            Create Account
                         </h1>
                         <p className="text-gray-400 text-sm">
-                            Enter your credentials to access your watchlist.
+                            Sign up to start your watchlist journey.
                         </p>
                     </div>
 
@@ -78,64 +77,66 @@ const Login: React.FC = () => {
                     )}
 
                     {/* Form */}
-                    <form onSubmit={handleLogin} className="space-y-5">
+                    <form onSubmit={handleSignUp} className="space-y-5">
+                        {/* Name */}
+                        <div className="relative group">
+                            <input
+                                type="text"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 pt-5 pb-2 text-white outline-none focus:bg-white/10 focus:border-purple-500 transition-all duration-300 peer placeholder-transparent"
+                                placeholder="Name"
+                            />
+                            <label className="absolute left-4 top-3.5 text-gray-400 text-xs transition-all duration-200 peer-placeholder-shown:text-sm peer-placeholder-shown:top-3.5 peer-focus:top-1.5 peer-focus:text-[10px] peer-focus:text-purple-400">
+                                Name
+                            </label>
+                        </div>
                         {/* Email */}
                         <div className="relative group">
                             <input
                                 type="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 pt-5 pb-2 text-white outline-none focus:bg-white/10 focus:border-blue-500 transition-all duration-300 peer placeholder-transparent"
+                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 pt-5 pb-2 text-white outline-none focus:bg-white/10 focus:border-purple-500 transition-all duration-300 peer placeholder-transparent"
                                 placeholder="Email"
                             />
-                            <label className="absolute left-4 top-3.5 text-gray-400 text-xs transition-all duration-200 peer-placeholder-shown:text-sm peer-placeholder-shown:top-3.5 peer-focus:top-1.5 peer-focus:text-[10px] peer-focus:text-blue-400">
+                            <label className="absolute left-4 top-3.5 text-gray-400 text-xs transition-all duration-200 peer-placeholder-shown:text-sm peer-placeholder-shown:top-3.5 peer-focus:top-1.5 peer-focus:text-[10px] peer-focus:text-purple-400">
                                 Email Address
                             </label>
                         </div>
-
                         {/* Password */}
                         <div className="relative group">
                             <input
-                                type={showPassword ? "text" : "password"}
+                                type="password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 pt-5 pb-2 text-white outline-none focus:bg-white/10 focus:border-blue-500 transition-all duration-300 peer placeholder-transparent pr-10"
+                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 pt-5 pb-2 text-white outline-none focus:bg-white/10 focus:border-purple-500 transition-all duration-300 peer placeholder-transparent"
                                 placeholder="Password"
                             />
-                            <label className="absolute left-4 top-3.5 text-gray-400 text-xs transition-all duration-200 peer-placeholder-shown:text-sm peer-placeholder-shown:top-3.5 peer-focus:top-1.5 peer-focus:text-[10px] peer-focus:text-blue-400">
+                            <label className="absolute left-4 top-3.5 text-gray-400 text-xs transition-all duration-200 peer-placeholder-shown:text-sm peer-placeholder-shown:top-3.5 peer-focus:top-1.5 peer-focus:text-[10px] peer-focus:text-purple-400">
                                 Password
                             </label>
-                            <button
-                                type="button"
-                                onClick={() => setShowPassword(!showPassword)}
-                                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
-                            >
-                                {showPassword ? <FaEyeSlash /> : <FaEye />}
-                            </button>
                         </div>
-
                         {/* Submit */}
                         <CustomButton
                             type="submit"
                             className="w-full py-3.5 mt-2 flex items-center justify-center gap-2"
                         >
-                            <span>Sign In</span>
+                            <span>Sign Up</span>
                             <MdArrowForward className="transition-transform duration-300" />
                         </CustomButton>
-
                         {/* Helper */}
                         <div className="flex justify-between items-center mt-4 text-xs text-gray-400">
-                            <p>Don't have an account?</p>
+                            <p>Already have an account?</p>
                             <a
-                                href="/signup"
+                                href="/login"
                                 className="hover:text-purple-400 transition-colors"
                             >
-                                Sign Up
+                                Login
                             </a>
                         </div>
                     </form>
                 </div>
-
                 {/* Footer */}
                 <p className="text-center text-gray-600 text-xs mt-8">
                     &copy; 2025 StreamHub. All rights reserved.
@@ -145,4 +146,4 @@ const Login: React.FC = () => {
     );
 };
 
-export default Login;
+export default SignUp;
