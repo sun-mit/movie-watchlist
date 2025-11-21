@@ -1,12 +1,12 @@
-// src/pages/Login.tsx
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { MdArrowForward } from "react-icons/md";
-import { MdMovie } from "react-icons/md";
+import { MdArrowForward, MdMovieFilter } from "react-icons/md";
 import CustomButton from "../components/CustomButton";
 import bgImage from "../assets/bgImg.png";
 import { useNavigate } from "react-router-dom";
 import useAuthStore from "../store/authStore";
+import AuthCard from "../components/AuthCard";
+import { motion } from "framer-motion";
 
 const Login: React.FC = () => {
     const { login } = useAuthStore();
@@ -30,118 +30,143 @@ const Login: React.FC = () => {
             return;
         }
         setError("");
-        navigate("/search"); // Navigate to search page after login
+        navigate("/search");
     };
 
     return (
-        <div className="min-h-screen w-full flex items-center justify-center relative overflow-hidden bg-black font-sans text-white">
-            {/* Background */}
-            <div
-                className="absolute inset-0 z-0 animate-pulse-slow"
-                style={{
-                    backgroundImage: `url(${bgImage})`,
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                    filter: "brightness(0.3) blur(2px)",
-                    transform: "scale(1.05)",
-                }}
-            />
-            <div className="absolute inset-0 z-0 bg-gradient-to-b from-black/60 via-transparent to-black/90" />
-
-            {/* Login Card */}
-            <div className="relative z-10 w-full max-w-[520px] px-4">
-                <div className="bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl p-8 md:p-10 relative overflow-hidden group">
-                    {/* Decorative Glow */}
-                    <div className="absolute -top-12 -left-12 w-40 h-40 bg-blue-600/20 rounded-full blur-3xl pointer-events-none group-hover:bg-blue-600/30 transition-colors duration-700" />
-
-                    {/* Header */}
-                    <div className="mb-8 text-center relative">
-                        <div className="flex justify-center mb-4">
-                            <div className="h-12 w-12 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-900/50">
-                                <MdMovie className="text-white text-3xl" />
-                            </div>
-                        </div>
-                        <h1 className="text-3xl font-bold tracking-tight mb-2">
-                            Welcome Back
-                        </h1>
-                        <p className="text-gray-400 text-sm">
-                            Enter your credentials to access your watchlist.
-                        </p>
-                    </div>
-
-                    {/* Error */}
-                    {error && (
-                        <div className="mb-6 p-3 bg-red-500/10 border border-red-500/20 rounded-lg flex items-center gap-3 text-red-400 text-sm animate-in fade-in slide-in-from-top-2">
-                            <div className="w-1.5 h-1.5 rounded-full bg-red-500" />
-                            {error}
-                        </div>
-                    )}
-
-                    {/* Form */}
-                    <form onSubmit={handleLogin} className="space-y-5">
-                        {/* Email */}
-                        <div className="relative group">
-                            <input
-                                type="email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 pt-5 pb-2 text-white outline-none focus:bg-white/10 focus:border-blue-500 transition-all duration-300 peer placeholder-transparent"
-                                placeholder="Email"
-                            />
-                            <label className="absolute left-4 top-3.5 text-gray-400 text-xs transition-all duration-200 peer-placeholder-shown:text-sm peer-placeholder-shown:top-3.5 peer-focus:top-1.5 peer-focus:text-[10px] peer-focus:text-blue-400">
-                                Email Address
-                            </label>
-                        </div>
-
-                        {/* Password */}
-                        <div className="relative group">
-                            <input
-                                type={showPassword ? "text" : "password"}
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 pt-5 pb-2 text-white outline-none focus:bg-white/10 focus:border-blue-500 transition-all duration-300 peer placeholder-transparent pr-10"
-                                placeholder="Password"
-                            />
-                            <label className="absolute left-4 top-3.5 text-gray-400 text-xs transition-all duration-200 peer-placeholder-shown:text-sm peer-placeholder-shown:top-3.5 peer-focus:top-1.5 peer-focus:text-[10px] peer-focus:text-blue-400">
-                                Password
-                            </label>
-                            <button
-                                type="button"
-                                onClick={() => setShowPassword(!showPassword)}
-                                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
-                            >
-                                {showPassword ? <FaEyeSlash /> : <FaEye />}
-                            </button>
-                        </div>
-
-                        {/* Submit */}
-                        <CustomButton
-                            type="submit"
-                            className="w-full py-3.5 mt-2 flex items-center justify-center gap-2"
+        <AuthCard
+            title="Welcome Back"
+            subtitle="Enter your credentials to access your watchlist."
+            icon={
+                <div className="flex justify-center mb-4">
+                    <motion.div
+                        animate={{
+                            y: [0, -6, 0],
+                            rotate: [0, 15, -15, 0],
+                            scale: [1, 1.15, 1],
+                        }}
+                        transition={{
+                            repeat: Infinity,
+                            duration: 2.5,
+                            ease: "easeInOut",
+                        }}
+                        className="h-12 w-12 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-900/50"
+                    >
+                        <motion.div
+                            animate={{ rotate: [0, 360] }}
+                            transition={{
+                                repeat: Infinity,
+                                duration: 6,
+                                ease: "linear",
+                            }}
                         >
-                            <span>Sign In</span>
-                            <MdArrowForward className="transition-transform duration-300" />
-                        </CustomButton>
-
-                        {/* Helper */}
-                        <div className="flex justify-between items-center mt-4 text-xs text-gray-400">
-                            <p>Don't have an account?</p>
-                            <a
-                                href="/signup"
-                                className="hover:text-purple-400 transition-colors"
-                            >
-                                Sign Up
-                            </a>
-                        </div>
-                    </form>
+                            <MdMovieFilter className="text-black text-3xl" />
+                        </motion.div>
+                    </motion.div>
                 </div>
+            }
+            error={error}
+            bgImage={bgImage}
+            glowColor="blue-600"
+            gradientFrom="black/60"
+            gradientVia="transparent"
+            gradientTo="black/90"
+            copyright="© 2025 Amit roy. All rights reserved."
+            footer={null}
+        >
+            <motion.form
+                initial="hidden"
+                animate="visible"
+                variants={{
+                    hidden: { opacity: 0 },
+                    visible: {
+                        opacity: 1,
+                        transition: { staggerChildren: 0.15 },
+                    },
+                }}
+                onSubmit={handleLogin}
+                className="space-y-5"
+            >
+                {/* Email */}
+                <motion.div
+                    variants={{
+                        hidden: { opacity: 0, y: 15 },
+                        visible: { opacity: 1, y: 0 },
+                    }}
+                    className="relative group"
+                >
+                    <input
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 pt-5 pb-2 text-white outline-none focus:bg-white/10 focus:border-blue-500 transition-all duration-300 peer placeholder-transparent"
+                        placeholder="Email"
+                    />
+                    <label className="absolute left-4 top-3.5 text-gray-400 text-xs transition-all duration-200 peer-placeholder-shown:text-sm peer-placeholder-shown:top-3.5 peer-focus:top-1.5 peer-focus:text-[10px] peer-focus:text-blue-400">
+                        Email Address
+                    </label>
+                </motion.div>
 
-                {/* Footer */}
-                <p className="text-center text-gray-600 text-xs mt-8">
-                    &copy; 2025 StreamHub. All rights reserved.
-                </p>
-            </div>
-        </div>
+                {/* Password */}
+                <motion.div
+                    variants={{
+                        hidden: { opacity: 0, y: 15 },
+                        visible: { opacity: 1, y: 0 },
+                    }}
+                    className="relative group"
+                >
+                    <input
+                        type={showPassword ? "text" : "password"}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 pt-5 pb-2 text-white outline-none focus:bg-white/10 focus:border-blue-500 transition-all duration-300 peer placeholder-transparent pr-10"
+                        placeholder="Password"
+                    />
+                    <label className="absolute left-4 top-3.5 text-gray-400 text-xs transition-all duration-200 peer-placeholder-shown:text-sm peer-placeholder-shown:top-3.5 peer-focus:top-1.5 peer-focus:text-[10px] peer-focus:text-blue-400">
+                        Password
+                    </label>
+
+                    <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+                    >
+                        {showPassword ? <FaEyeSlash /> : <FaEye />}
+                    </button>
+                </motion.div>
+
+                {/* Submit Button */}
+                <motion.div
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
+                >
+                    <CustomButton
+                        type="submit"
+                        className="w-full py-3.5 mt-2 flex items-center justify-center gap-2"
+                    >
+                        <span>Sign In</span>
+                        <MdArrowForward className="transition-transform duration-300" />
+                    </CustomButton>
+                </motion.div>
+
+                {/* Footer Link */}
+                <motion.div
+                    variants={{
+                        hidden: { opacity: 0, y: 10 },
+                        visible: { opacity: 1, y: 0 },
+                    }}
+                    className="flex justify-between items-center mt-4 text-xs text-gray-400"
+                >
+                    <p>Don't have an account?</p>
+                    <a
+                        href="/signup"
+                        className="hover:text-purple-400 transition-colors"
+                    >
+                        Sign Up
+                    </a>
+                </motion.div>
+            </motion.form>
+        </AuthCard>
     );
 };
 
