@@ -70,3 +70,13 @@ export const getRecentMovies = async () => {
     );
     return response.data;
 };
+
+// Get videos (trailers) for a movie
+export const getMovieVideos = async (id: number | string) => {
+    const response = await axios.get(`${TMDB_BASE_URL}/movie/${id}/videos`, {
+        params: {
+            api_key: TMDB_API_KEY,
+        },
+    });
+    return response.data;
+};
