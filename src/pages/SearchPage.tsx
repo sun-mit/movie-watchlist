@@ -5,12 +5,14 @@ import {
     getPopularMovies,
     getTopRatedMovies,
 } from "../api/tmdbApi";
+import { getRecentMovies } from "../api/tmdbApi";
 import {
     Search as SearchIcon,
     SentimentDissatisfied as NoResultsIcon,
 } from "@mui/icons-material";
 
 import { MovieCard } from "../components/MovieCard";
+import MovieSection from "../components/MovieSection";
 
 import { motion, easeInOut } from "framer-motion";
 
@@ -45,6 +47,17 @@ const SearchPage: React.FC = () => {
     } = useQuery({
         queryKey: ["topRatedMovies"],
         queryFn: getTopRatedMovies,
+        enabled: !search,
+    });
+
+    const {
+        data: recentData,
+        isLoading: isRecentLoading,
+        isError: isRecentError,
+        error: recentError,
+    } = useQuery({
+        queryKey: ["recentMovies"],
+        queryFn: getRecentMovies,
         enabled: !search,
     });
 
@@ -87,6 +100,9 @@ const SearchPage: React.FC = () => {
         : [];
     const searchMoviesList: TMDBMovie[] = searchData?.results
         ? searchData.results
+        : [];
+    const recentMovies: TMDBMovie[] = recentData?.results
+        ? recentData.results
         : [];
 
     return (
@@ -152,114 +168,35 @@ const SearchPage: React.FC = () => {
                 </motion.div>
             ) : (
                 <>
-                    {/* Popular Movies */}
-                    <motion.div
-                        variants={fadeUp}
-                        initial="hidden"
-                        whileInView="visible"
-                        viewport={{ once: true }}
-                        className="mb-6"
-                    >
-                        <h1 className="text-3xl font-bold tracking-tight">
-                            Popular Movies
-                        </h1>
-                    </motion.div>
-
-                    {isPopularLoading ? (
-                        <div className="text-center text-blue-300 animate-pulse mt-10">
-                            Loading...
-                        </div>
-                    ) : isPopularError ? (
-                        <div className="text-center text-red-400 mt-10">
-                            Error:{" "}
-                            {popularError instanceof Error
-                                ? popularError.message
-                                : "Failed to load popular movies."}
-                        </div>
-                    ) : (
-                        <motion.div
-                            className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8 mb-14"
-                            variants={{
-                                visible: {
-                                    transition: { staggerChildren: 0.05 },
-                                },
-                            }}
-                            initial="hidden"
-                            whileInView="visible"
-                            viewport={{ once: true }}
-                        >
-                            {popularMovies.map((movie) => (
-                                <motion.div
-                                    key={movie.id}
-                                    variants={cardMotion}
-                                >
-                                    <MovieCard
-                                        {...movie}
-                                        to={`/movie/${movie.id}`}
-                                        color="blue"
-                                    />
-                                </motion.div>
-                            ))}
-                        </motion.div>
-                    )}
-
-                    {/* Top Rated Movies */}
-                    <motion.div
-                        variants={fadeUp}
-                        initial="hidden"
-                        whileInView="visible"
-                        viewport={{ once: true }}
-                        className="flex justify-between items-center mb-6 mt-2"
-                    >
-                        <h1 className="text-3xl font-bold tracking-tight">
-                            Top Rated Movies
-                        </h1>
-                        <span className="text-yellow-400 font-semibold">
-                            Most Rating
-                        </span>
-                    </motion.div>
-
-                    {isTopRatedLoading ? (
-                        <div className="text-center text-blue-300 animate-pulse mt-10">
-                            Loading...
-                        </div>
-                    ) : isTopRatedError ? (
-                        <div className="text-center text-red-400 mt-10">
-                            Error:{" "}
-                            {topRatedError instanceof Error
-                                ? topRatedError.message
-                                : "Failed to load top rated movies."}
-                        </div>
-                    ) : (
-                        <motion.div
-                            className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8 mb-12"
-                            variants={{
-                                visible: {
-                                    transition: { staggerChildren: 0.05 },
-                                },
-                            }}
-                            initial="hidden"
-                            whileInView="visible"
-                            viewport={{ once: true }}
-                        >
-                            {topRatedMovies.map((movie) => (
-                                <motion.div
-                                    key={movie.id}
-                                    variants={cardMotion}
-                                >
-                                    <MovieCard
-                                        {...movie}
-                                        to={`/movie/${movie.id}`}
-                                        color="yellow"
-                                    />
-                                </motion.div>
-                            ))}
-                        </motion.div>
-                    )}
+                    <MovieSection
+                        title="Recent Movies"
+                        color="red"
+                        movies={recentMovies}
+                        isLoading={isRecentLoading}
+                        isError={isRecentError}
+                        error={recentError}
+                        layout="row"
+                    />
+                    <MovieSection
+                        title="Popular Movies"
+                        color="blue"
+                        movies={popularMovies}
+                        isLoading={isPopularLoading}
+                        isError={isPopularError}
+                        error={popularError}
+                    />
+                    <MovieSection
+                        title="Top Rated Movies"
+                        color="yellow"
+                        movies={topRatedMovies}
+                        isLoading={isTopRatedLoading}
+                        isError={isTopRatedError}
+                        error={topRatedError}
+                        subtitle="Most Rating"
+                    />
                 </>
             )}
 
-            {/* SEARCH RESULTS LIST */}
             {search && (
                 <>
                     {isSearchLoading && (
@@ -267,7 +204,6 @@ const SearchPage: React.FC = () => {
                             Loading...
                         </div>
                     )}
-
                     {isSearchError && (
                         <div className="text-center mt-20 text-red-400">
                             Error:{" "}
@@ -276,7 +212,6 @@ const SearchPage: React.FC = () => {
                                 : "Failed to fetch movies."}
                         </div>
                     )}
-
                     {!isSearchLoading &&
                         !isSearchError &&
                         searchMoviesList.length === 0 && (
@@ -294,7 +229,6 @@ const SearchPage: React.FC = () => {
                                 </p>
                             </motion.div>
                         )}
-
                     {!isSearchLoading &&
                         !isSearchError &&
                         searchMoviesList.length > 0 && (

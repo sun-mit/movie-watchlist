@@ -2,9 +2,6 @@ import React, { Suspense, lazy } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import ProtectedRoute from "./components/ProtectedRoute";
-
-// Lazy load pages
-const HomePage = lazy(() => import("./pages/HomePage"));
 const SearchPage = lazy(() => import("./pages/SearchPage"));
 const MovieDetails = lazy(() => import("./pages/MovieDetails"));
 const Watchlist = lazy(() => import("./pages/WatchListPage"));
@@ -24,8 +21,7 @@ const App: React.FC = () => {
             >
                 <Routes>
                     {/* Public */}
-                    <Route path="/" element={<HomePage />} />
-                    <Route path="/login" element={<Login />} />
+                    <Route path="/" element={<Login />} />
                     <Route path="/signup" element={<SignUp />} />
 
                     {/* Protected */}

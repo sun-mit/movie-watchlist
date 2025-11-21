@@ -11,7 +11,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 
     if (!user) {
         // Not logged in, redirect to login page
-        return <Navigate to="/login" replace />;
+        return <Navigate to="/" replace />;
     }
 
     // Logged in, render children

@@ -14,8 +14,9 @@ const Navbar: React.FC = () => {
     };
 
     const confirmLogout = () => {
+        setShowConfirm(false);
         logout();
-        navigate("/login");
+        navigate("/");
     };
 
     return (
