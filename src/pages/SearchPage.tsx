@@ -4,8 +4,9 @@ import {
     searchMovies,
     getPopularMovies,
     getTopRatedMovies,
+    getRecentMovies,
 } from "../api/tmdbApi";
-import { getRecentMovies } from "../api/tmdbApi";
+import NowPlayingBanner from "../components/NowPlayingBanner";
 import {
     Search as SearchIcon,
     SentimentDissatisfied as NoResultsIcon,
@@ -84,12 +85,18 @@ const SearchPage: React.FC = () => {
         enabled: !search,
     });
 
+    // Now Playing Movies (for banner)
+    const nowPlayingMovies = recentData?.results ? recentData.results : [];
+
     type TMDBMovie = {
         id: number;
         title: string;
         poster_path: string | null;
+        backdrop_path?: string | null;
         release_date: string;
         vote_average: number;
+        overview?: string;
+        genre_ids?: number[];
     };
 
     const popularMovies: TMDBMovie[] = popularData?.results
@@ -132,6 +139,9 @@ const SearchPage: React.FC = () => {
                 animate={{ y: [0, 20, 0] }}
                 transition={{ duration: 10, repeat: Infinity }}
             />
+
+            {/* Now Playing Banner */}
+            {!search && <NowPlayingBanner movies={nowPlayingMovies} />}
 
             {/* Sticky Search Bar */}
             <motion.div
