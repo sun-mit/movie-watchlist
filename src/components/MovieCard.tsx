@@ -11,6 +11,7 @@ export type MovieCardProps = {
     vote_average: number;
     to: string;
     color?: "blue" | "yellow" | "red";
+    hideActions?: boolean;
 };
 const colorMap = {
     blue: {
@@ -35,21 +36,31 @@ export const MovieCard: React.FC<MovieCardProps> = ({
     vote_average,
     to,
     color = "blue",
+    hideActions = false,
 }) => {
     const colorStyles = colorMap[color];
+    const cardClass = hideActions
+        ? `rounded-2xl overflow-hidden shadow-2xl transition-all duration-300 relative group animate-fade-in border bg-black flex flex-col cursor-pointer border-gray-900 ${colorStyles.shadow}`
+        : `rounded-2xl overflow-hidden shadow-2xl transform hover:scale-[1.08] hover:shadow-black/70 transition-all duration-300 relative group animate-fade-in border border-gray-900 bg-black flex flex-col cursor-pointer ${colorStyles.shadow}`;
     return (
         <Link
             key={id}
             to={to}
-            className={`rounded-2xl overflow-hidden shadow-2xl transform hover:scale-[1.08] hover:shadow-black/70 transition-all duration-300 relative group animate-fade-in border border-gray-900 bg-black flex flex-col cursor-pointer ${colorStyles.shadow}`}
+            className={cardClass}
             style={{
                 aspectRatio: "2/3",
-                minHeight: "420px",
-                maxHeight: "560px",
+                minHeight: "320px",
+                maxHeight: "460px",
                 textDecoration: "none",
             }}
         >
-            <div className="relative w-full h-full flex flex-col justify-end">
+            <div
+                className={`relative w-full h-full flex flex-col justify-end ${
+                    hideActions
+                        ? `hover:shadow-lg hover:border-${color}-400 transition-all duration-300`
+                        : ""
+                }`}
+            >
                 <img
                     src={
                         poster_path
@@ -58,7 +69,11 @@ export const MovieCard: React.FC<MovieCardProps> = ({
                     }
                     alt={title}
                     className="absolute inset-0 w-full h-full object-cover group-hover:opacity-95 rounded-2xl"
-                    style={{ transition: "opacity 0.5s" }}
+                    style={{
+                        transition: "opacity 0.5s",
+                        minHeight: "320px",
+                        maxHeight: "380px",
+                    }}
                 />
                 {/* Glassy Rating Badge (Top Left) */}
                 <div
@@ -78,6 +93,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({
                         wordBreak: "break-word",
                         borderBottomLeftRadius: "1rem",
                         borderBottomRightRadius: "1rem",
+                        fontSize: "0.95rem",
                     }}
                 >
                     <span className="text-white text-xl font-extrabold tracking-wide shadow-lg mb-4">
@@ -88,23 +104,25 @@ export const MovieCard: React.FC<MovieCardProps> = ({
                             </span>
                         )}
                     </span>
-                    <div className="flex gap-2">
-                        <Link
-                            to={to}
-                            className="px-4 py-2 rounded-lg bg-white/20 backdrop-blur-md border border-white/30 text-white font-bold shadow-lg transition-all text-sm hover:bg-white/30 hover:text-blue-200"
-                            style={{
-                                boxShadow: "0 4px 16px 0 rgba(0,0,0,0.18)",
-                            }}
-                        >
-                            Details
-                        </Link>
-                        <CustomButton
-                            variant="outlined"
-                            className="px-4 py-2 rounded-lg bg-white/20 backdrop-blur-md border border-white/30 text-white font-bold shadow-lg transition-all text-sm hover:bg-white/30 hover:text-green-200"
-                        >
-                            + Watchlist
-                        </CustomButton>
-                    </div>
+                    {!hideActions && (
+                        <div className="flex gap-2">
+                            <Link
+                                to={to}
+                                className="px-4 py-2 rounded-lg bg-white/20 backdrop-blur-md border border-white/30 text-white font-bold shadow-lg transition-all text-sm hover:bg-white/30 hover:text-blue-200"
+                                style={{
+                                    boxShadow: "0 4px 16px 0 rgba(0,0,0,0.18)",
+                                }}
+                            >
+                                Details
+                            </Link>
+                            <CustomButton
+                                variant="outlined"
+                                className="px-4 py-2 rounded-lg bg-white/20 backdrop-blur-md border border-white/30 text-white font-bold shadow-lg transition-all text-sm hover:bg-white/30 hover:text-green-200"
+                            >
+                                + Watchlist
+                            </CustomButton>
+                        </div>
+                    )}
                 </div>
             </div>
         </Link>

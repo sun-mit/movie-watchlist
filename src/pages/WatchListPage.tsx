@@ -2,7 +2,6 @@ import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Toast from "../components/Toast";
 import useAuthStore from "../store/authStore";
-import { Link } from "react-router-dom";
 import { getMovieDetails } from "../api/tmdbApi";
 import { useQuery } from "@tanstack/react-query";
 
@@ -71,22 +70,6 @@ const Watchlist: React.FC = () => {
         refetch();
         setToast({ message: "Removed from watchlist!", type: "success" });
     };
-
-    if (!user) {
-        return (
-            <div className="min-h-screen flex flex-col items-center justify-center text-white bg-gray-900">
-                <h2 className="text-2xl font-bold mb-4">
-                    You need to login first
-                </h2>
-                <Link
-                    to="/login"
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl transition-all"
-                >
-                    Go to Login
-                </Link>
-            </div>
-        );
-    }
 
     return (
         <div className="min-h-screen w-full relative flex flex-col items-center justify-start text-white font-sans pt-24">

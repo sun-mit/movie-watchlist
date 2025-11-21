@@ -1,4 +1,3 @@
-// src/pages/SignUp.tsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuthStore from "../store/authStore";
@@ -172,7 +171,7 @@ const SignUp: React.FC = () => {
                 >
                     <p>Already have an account?</p>
                     <a
-                        href="/login"
+                        href="/"
                         className="hover:text-purple-400 transition-colors"
                     >
                         Login
