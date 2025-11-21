@@ -9,6 +9,8 @@ const END_POINTS = {
     TOP_RATED_MOVIES: "/movie/top_rated",
     MOVIE_DETAILS: (id: number | string) => `/movie/${id}`,
     RECENT_MOVIES: "/movie/now_playing",
+    MOVIE_TRAILERS: (id: number | string) => `/movie/${id}/videos`,
+    SIMILIAR_MOVIES: (id: number | string) => `/movie/${id}/similar`,
 };
 
 export const searchMovies = async (query: string) => {
@@ -79,4 +81,35 @@ export const getMovieVideos = async (id: number | string) => {
         },
     });
     return response.data;
+};
+
+export const getSimilarMovies = async (movieId: string) => {
+    const response = await axios.get(
+        `${TMDB_BASE_URL}${END_POINTS.SIMILIAR_MOVIES(movieId)}`,
+        {
+            params: {
+                api_key: TMDB_API_KEY,
+            },
+        }
+    );
+    return response.data.results || [];
+};
+
+// Get the YouTube trailer for a movie
+export const getMovieTrailer = async (movieId: string) => {
+    const response = await axios.get(
+        `${TMDB_BASE_URL}${END_POINTS.MOVIE_TRAILERS(movieId)}`,
+        {
+            params: {
+                api_key: TMDB_API_KEY,
+            },
+        }
+    );
+    const videos = response.data.results;
+    // Find YouTube trailer
+    const trailer = videos?.find(
+        (v: { type: string; site: string }) =>
+            v.type === "Trailer" && v.site === "YouTube"
+    );
+    return trailer || null;
 };
