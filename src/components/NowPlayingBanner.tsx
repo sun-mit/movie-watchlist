@@ -77,6 +77,11 @@ const NowPlayingBanner: React.FC<{ movies: TMDBMovie[] }> = ({ movies }) => {
                 transition={{ duration: 0.8, ease: "easeOut" }}
                 className="relative w-full h-[650px] rounded-3xl overflow-hidden mb-10 shadow-2xl"
             >
+                {/* Now Playing Badge */}
+                <div className="absolute top-6 left-8 z-20 flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-pink-600 via-purple-600 to-indigo-600 text-white font-bold shadow-lg text-lg">
+                    <MdPlayArrow size={22} />
+                    Now Playing
+                </div>
                 <AnimatePresence>
                     {backdropUrl && movie && (
                         <motion.img
