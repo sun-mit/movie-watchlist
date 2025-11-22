@@ -1,10 +1,23 @@
 import { useState, useRef, useEffect, type FC } from "react";
 import { motion } from "framer-motion";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getMovieDetails, getMovieTrailer } from "../api/tmdbApi";
 import { useQuery as useVideoQuery } from "@tanstack/react-query";
 import useAuthStore from "../store/authStore";
+
+const GoBackButton: FC = () => {
+    const navigate = useNavigate();
+    return (
+        <button
+            onClick={() => navigate("/search")}
+            className="bg-blue-700 hover:bg-blue-600 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl font-bold shadow-lg transition-all"
+            style={{ marginLeft: "0.5rem" }}
+        >
+            Go Back to Search
+        </button>
+    );
+};
 
 const MovieDetails: FC = () => {
     const titleRef = useRef<HTMLHeadingElement>(null);
@@ -172,6 +185,7 @@ const MovieDetails: FC = () => {
                         >
                             {movie.title}
                         </motion.h1>
+
                         <div className="flex flex-wrap gap-2 sm:gap-4 mb-4 sm:mb-6">
                             <span className="px-2 sm:px-4 py-1 sm:py-2 rounded-xl bg-gradient-to-br from-blue-400/80 to-blue-700/60 backdrop-blur-xl text-xs sm:text-base font-bold shadow-xl border border-blue-300/40 text-white">
                                 {movie.release_date
@@ -212,6 +226,17 @@ const MovieDetails: FC = () => {
                                 Language:{" "}
                             </span>
                             {movie.original_language?.toUpperCase() || "N/A"}
+                        </div>
+
+                        <div className="mb-2">
+                            <span className="font-semibold text-gray-400">
+                                Release Date:{" "}
+                            </span>
+                            <span className="text-gray-200">
+                                {movie.release_date
+                                    ? movie.release_date
+                                    : "N/A"}
+                            </span>
                         </div>
                         <div className="mb-2 sm:mb-4">
                             <span className="font-semibold text-gray-400">
@@ -283,15 +308,20 @@ const MovieDetails: FC = () => {
                                     ? "Remove from Watchlist"
                                     : "Add to Watchlist"}
                             </button>
-                            {movie.homepage && (
-                                <a
-                                    href={movie.homepage}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="bg-gray-800 hover:bg-gray-700 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl font-bold shadow-lg transition-all"
-                                >
-                                    Official Site
-                                </a>
+                            {movie.homepage ? (
+                                <>
+                                    <a
+                                        href={movie.homepage}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="bg-gray-800 hover:bg-gray-700 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl font-bold shadow-lg transition-all"
+                                    >
+                                        Official Site
+                                    </a>
+                                    <GoBackButton />
+                                </>
+                            ) : (
+                                <GoBackButton />
                             )}
                         </motion.div>
                     </motion.div>
