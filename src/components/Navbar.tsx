@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import useAuthStore from "../store/authStore";
 import Logo from "../assets/logo.svg";
@@ -9,6 +9,23 @@ const Navbar: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const [showProfileMenu, setShowProfileMenu] = useState(false);
+    const profileMenuRef = useRef<HTMLDivElement>(null);
+    // Close profile dropdown when clicking outside
+    useEffect(() => {
+        if (!showProfileMenu) return;
+        function handleClickOutside(event: MouseEvent) {
+            if (
+                profileMenuRef.current &&
+                !profileMenuRef.current.contains(event.target as Node)
+            ) {
+                setShowProfileMenu(false);
+            }
+        }
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [showProfileMenu]);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     const handleProfileClick = () => {
@@ -22,7 +39,7 @@ const Navbar: React.FC = () => {
     };
 
     return (
-        <nav className="w-full fixed top-0 left-0 z-50 text-white px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between backdrop-blur-lg bg-gradient-to-r from-blue-900 via-blue-800 to-blue-900">
+        <nav className="w-full fixed top-0 left-0 z-50 text-white px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between backdrop-blur-xl bg-white/10">
             <div className="flex items-center gap-2 sm:gap-3 drop-shadow-lg">
                 <img
                     src={Logo}
@@ -80,7 +97,7 @@ const Navbar: React.FC = () => {
                             <FiBookmark size={22} />
                             <span className="text-base">Watchlist</span>
                         </Link>
-                        <div className="relative">
+                        <div className="relative" ref={profileMenuRef}>
                             <button
                                 onClick={handleProfileClick}
                                 className="flex items-center gap-2 px-3 py-1 rounded-xl bg-white/10 focus:outline-none"
