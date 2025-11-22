@@ -1,73 +1,87 @@
-# React + TypeScript + Vite
+# Movie Watchlist
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern, responsive web app for managing your personal movie watchlist. Built with React, TypeScript, Vite, Tailwind CSS, Zustand. Integrates with TMDB API for movie data.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+-   **Authentication**: Sign up, login, and manage your account (localStorage-based)
+-   **Movie Search**: Search movies using TMDB API
+-   **Watchlist**: Add/remove movies to your personal watchlist
+-   **Movie Details**: View detailed info and trailers for each movie
+-   **Responsive UI**: Mobile-friendly, animated, and visually appealing
+-   **Protected Routes**: Only authenticated users can access main features
+-   **State Management**: Zustand for global state
+-   **API Integration**: Axios for TMDB API requests
+-   **Styling**: Tailwind CSS, and custom gradients
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+-   React 19 + TypeScript
+-   Vite
+-   Tailwind CSS
+-   Zustand
+-   Framer Motion (animations)
+-   Axios
+-   React Router
+-   TMDB API
+-   TanStack Query
 
-## Expanding the ESLint configuration
+## Project Structure
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+movie-watchlist/
+├── public/
+│   └── logo.svg
+├── src/
+│   ├── api/           # TMDB API integration
+│   ├── assets/        # Images and SVGs
+│   ├── components/    # Reusable UI components
+│   ├── pages/         # App pages (Home, Login, Signup, Details, Watchlist, Search)
+│   ├── store/         # Zustand store for auth
+│   ├── styles/        # Theme and global styles
+│   ├── App.tsx        # Main app with routing
+│   ├── main.tsx       # App entry point
+│   └── index.css      # Tailwind base styles
+├── index.html         # App HTML entry
+├── package.json       # Dependencies and scripts
+├── tailwind.config.cjs
+├── vite.config.ts
+├── tsconfig*.json     # TypeScript configs
+└── README.md          # Project info
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Getting Started
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+1. **Clone the repo**
+    ```bash
+    git clone git@github.com:sun-mit/movie-watchlist.git
+    cd movie-watchlist
+    ```
+2. **Install dependencies**
+    ```bash
+    yarn
+    ```
+3. **Set up TMDB API key**
+    - Create a `.env` file in the root:
+        ```env
+        VITE_TMDB_API_KEY=your_tmdb_api_key_here
+        ```
+    - Get your API key from [TMDB](https://www.themoviedb.org/settings/api)
+4. **Run the app**
+    ```bash
+    yarn dev
+    ```
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## Usage
+
+-   **Sign Up/Login**: Create an account or log in (credentials stored in localStorage)
+-   **Browse Movies**: Home page shows recent, popular, and top-rated movies
+-   **Search**: Use the search page to find movies
+-   **Details**: Click a movie for details and trailer
+-   **Watchlist**: Add/remove movies to your personal watchlist
+
+## Environment Variables
+
+-   `VITE_TMDB_API_KEY`: Your TMDB API key
+
+Made by Amit Roy (sun-mit)

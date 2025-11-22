@@ -1,4 +1,4 @@
-import React from "react";
+import type { FC } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
     getPopularMovies,
@@ -11,7 +11,7 @@ import MovieSection from "../components/MovieSection";
 
 import { motion } from "framer-motion";
 
-const SearchPage: React.FC = () => {
+const SearchPage: FC = () => {
     const {
         data: topRatedData,
         isLoading: isTopRatedLoading,

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { MdArrowForward, MdMovieFilter } from "react-icons/md";
+import { FaEye, FaEyeSlash, FaArrowRight } from "react-icons/fa";
+import { MdMovie } from "react-icons/md";
 import CustomButton from "../components/CustomButton";
 import bgImage from "../assets/bgImg.png";
 import { useNavigate } from "react-router-dom";
@@ -60,7 +60,7 @@ const Login: React.FC = () => {
                                 ease: "linear",
                             }}
                         >
-                            <MdMovieFilter className="text-black text-3xl" />
+                            <MdMovie className="text-black w-8 h-8" />
                         </motion.div>
                     </motion.div>
                 </div>
@@ -87,7 +87,6 @@ const Login: React.FC = () => {
                 onSubmit={handleLogin}
                 className="space-y-5"
             >
-                {/* Email */}
                 <motion.div
                     variants={{
                         hidden: { opacity: 0, y: 15 },
@@ -107,7 +106,6 @@ const Login: React.FC = () => {
                     </label>
                 </motion.div>
 
-                {/* Password */}
                 <motion.div
                     variants={{
                         hidden: { opacity: 0, y: 15 },
@@ -135,7 +133,6 @@ const Login: React.FC = () => {
                     </button>
                 </motion.div>
 
-                {/* Submit Button */}
                 <motion.div
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.97 }}
@@ -145,22 +142,23 @@ const Login: React.FC = () => {
                         className="w-full py-3.5 mt-2 flex items-center justify-center gap-2"
                     >
                         <span>Sign In</span>
-                        <MdArrowForward className="transition-transform duration-300" />
+                        <FaArrowRight className="w-5 h-5" />
                     </CustomButton>
                 </motion.div>
 
-                {/* Footer Link */}
                 <motion.div
                     variants={{
                         hidden: { opacity: 0, y: 10 },
                         visible: { opacity: 1, y: 0 },
                     }}
-                    className="flex justify-between items-center mt-4 text-xs text-gray-400"
+                    className="flex flex-col sm:flex-row justify-between items-center mt-4 text-xs text-gray-400 gap-2 sm:gap-0"
                 >
-                    <p>Don't have an account?</p>
+                    <p className="text-center sm:text-left w-full sm:w-auto">
+                        Don't have an account?
+                    </p>
                     <a
                         href="/signup"
-                        className="font-bold text-purple-500 hover:text-purple-400 transition-colors underline underline-offset-2 drop-shadow"
+                        className="font-bold text-purple-500 hover:text-purple-400 transition-colors underline underline-offset-2 drop-shadow text-center sm:text-right w-full sm:w-auto"
                     >
                         Sign Up
                     </a>

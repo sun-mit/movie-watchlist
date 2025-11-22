@@ -112,7 +112,7 @@ const MovieSection: React.FC<MovieSectionProps> = ({
                 </motion.div>
             ) : (
                 <motion.div
-                    className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-8 mb-14"
+                    className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-6 sm:gap-8 md:gap-[2.5rem] lg:gap-[3rem] xl:gap-[3.5rem] mb-14 px-2 sm:px-4 md:px-8"
                     variants={{
                         visible: { transition: { staggerChildren: 0.05 } },
                     }}

@@ -1,3 +1,10 @@
+import { useState, useEffect, type FC } from "react";
+import { motion, easeOut } from "framer-motion";
+import { MdSentimentDissatisfied, MdSearch } from "react-icons/md";
+import { MovieCard } from "../components/MovieCard";
+import { useQuery } from "@tanstack/react-query";
+import { searchMovies } from "../api/tmdbApi";
+
 type TMDBMovie = {
     id: number;
     title: string;
@@ -8,15 +15,7 @@ type TMDBMovie = {
     overview?: string;
     genre_ids?: number[];
 };
-import React, { useState, useEffect } from "react";
-import { motion, easeOut } from "framer-motion";
-import {
-    SentimentDissatisfied as NoResultsIcon,
-    Search as SearchIcon,
-} from "@mui/icons-material";
-import { MovieCard } from "../components/MovieCard";
-import { useQuery } from "@tanstack/react-query";
-import { searchMovies } from "../api/tmdbApi";
+
 const cardMotion = {
     hidden: { opacity: 0, y: 30, scale: 0.85 },
     visible: {
@@ -36,7 +35,7 @@ const fadeUp = {
     },
 };
 
-const SearchResults: React.FC = () => {
+const SearchResults: FC = () => {
     const [search, setSearch] = useState("");
     const [debouncedSearch, setDebouncedSearch] = useState("");
 
@@ -90,14 +89,14 @@ const SearchResults: React.FC = () => {
             />
 
             <motion.div
-                className="sticky top-5 z-50 flex justify-center mb-10"
+                className="top-5 flex justify-center mb-10"
                 initial={{ opacity: 0, y: -30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8 }}
             >
                 <div className="relative w-full max-w-xl">
                     <span className="absolute left-4 top-1/2 -translate-y-1/2 text-blue-400">
-                        <SearchIcon fontSize="medium" />
+                        <MdSearch className="text-xl" />
                     </span>
                     <motion.input
                         whileFocus={{ scale: 1.02 }}
@@ -138,10 +137,7 @@ const SearchResults: React.FC = () => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                     >
-                        <NoResultsIcon
-                            style={{ fontSize: 80 }}
-                            className="text-gray-500 mb-4 animate-bounce"
-                        />
+                        <MdSentimentDissatisfied className="text-gray-500 mb-4 animate-bounce text-7xl" />
                         <p className="text-xl text-gray-300">No movies found</p>
                     </motion.div>
                 )}
