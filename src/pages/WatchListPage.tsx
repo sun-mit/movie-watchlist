@@ -29,7 +29,6 @@ const Watchlist: React.FC = () => {
         return JSON.parse(localStorage.getItem(key) || "[]") as string[];
     }, [getWatchlistKey]);
 
-    // Query: fetch all movie details for watchlist, prevent duplicates
     const {
         data: movies,
         isLoading,
@@ -37,7 +36,7 @@ const Watchlist: React.FC = () => {
     } = useQuery<Movie[]>({
         queryKey: ["watchlistMovies", user?.email],
         queryFn: async () => {
-            const ids = Array.from(new Set(getWatchlistIds())); // Remove duplicate IDs
+            const ids = Array.from(new Set(getWatchlistIds())); 
             const results: Movie[] = [];
             const seen = new Set<number>();
             for (const id of ids) {
@@ -53,8 +52,8 @@ const Watchlist: React.FC = () => {
                         });
                         seen.add(movie.id);
                     }
-                } catch {
-                    // skip failed fetch
+                } catch (err) {
+                    console.error("Failed to fetch movie details:", err);
                 }
             }
             return results;
@@ -62,13 +61,11 @@ const Watchlist: React.FC = () => {
         enabled: !!user,
     });
 
-    // Toast state
     const [toast, setToast] = React.useState<{
         message: string;
         type: "success" | "error";
     } | null>(null);
 
-    // Remove movie from watchlist with toast
     const handleRemove = (id: number) => {
         const key = getWatchlistKey();
         if (!key) return;
@@ -81,10 +78,10 @@ const Watchlist: React.FC = () => {
 
     return (
         <div className="min-h-screen w-full relative flex flex-col items-center justify-start text-white font-sans pt-24 overflow-x-hidden">
-            {/* Animated Responsive Background */}
+   
             <div className="absolute inset-0 -z-20 animate-gradient-move bg-gradient-to-tr from-indigo-900 via-blue-800 to-pink-700 opacity-90" />
             <div className="absolute inset-0 -z-10 backdrop-blur-xl" />
-            {/* Floating Dots Animation */}
+     
             <motion.div
                 className="absolute top-10 left-10 w-16 h-16 bg-pink-400/30 rounded-full blur-2xl pointer-events-none"
                 animate={{
@@ -253,7 +250,7 @@ const Watchlist: React.FC = () => {
                                         Remove
                                     </motion.button>
                                 </div>
-                                {/* Card Glow on Hover */}
+                        
                                 <motion.div
                                     className="absolute inset-0 pointer-events-none rounded-2xl group-hover:shadow-[0_0_40px_10px_rgba(236,72,153,0.18)] transition-all duration-300"
                                     initial={{ opacity: 0 }}
@@ -265,31 +262,6 @@ const Watchlist: React.FC = () => {
                     </AnimatePresence>
                 </motion.div>
             )}
-            <style>{`
-                @keyframes fade-in {
-                    from { opacity: 0; transform: translateY(20px); }
-                    to { opacity: 1; transform: translateY(0); }
-                }
-                .animate-fade-in {
-                    animation: fade-in 0.7s cubic-bezier(.4,0,.2,1);
-                }
-                @keyframes gradient-move {
-                    0% { background-position: 0% 50%; }
-                    50% { background-position: 100% 50%; }
-                    100% { background-position: 0% 50%; }
-                }
-                .animate-gradient-move {
-                    background-size: 180% 180%;
-                    animation: gradient-move 10s linear infinite;
-                }
-                @keyframes bounce-x {
-                    0%, 100% { transform: translateX(0); }
-                    50% { transform: translateX(6px); }
-                }
-                .animate-bounce-x {
-                    animation: bounce-x 1.2s infinite;
-                }
-            `}</style>
             {toast && (
                 <Toast
                     message={toast.message}
