@@ -30,7 +30,7 @@ const SignUp: React.FC = () => {
             return;
         }
         setError("");
-        navigate("/search");
+        navigate("/home");
     };
 
     return (

@@ -1,30 +1,42 @@
+type TMDBMovie = {
+    id: number;
+    title: string;
+    poster_path: string | null;
+    backdrop_path?: string | null;
+    release_date: string;
+    vote_average: number;
+    overview?: string;
+    genre_ids?: number[];
+};
 import React, { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { motion, easeOut } from "framer-motion";
 import {
-    getPopularMovies,
-    getTopRatedMovies,
-    getRecentMovies,
-    searchMovies,
-} from "../api/tmdbApi";
-import NowPlayingBanner from "../components/NowPlayingBanner";
-import { Search as SearchIcon } from "@mui/icons-material";
-
-import MovieSection from "../components/MovieSection";
-
-import SearchResults from "../components/SearchResults";
-
-import { motion, easeInOut } from "framer-motion";
+    SentimentDissatisfied as NoResultsIcon,
+    Search as SearchIcon,
+} from "@mui/icons-material";
+import { MovieCard } from "../components/MovieCard";
+import { useQuery } from "@tanstack/react-query";
+import { searchMovies } from "../api/tmdbApi";
+const cardMotion = {
+    hidden: { opacity: 0, y: 30, scale: 0.85 },
+    visible: {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        transition: { duration: 0.5, ease: easeOut },
+    },
+};
 
 const fadeUp = {
     hidden: { opacity: 0, y: 40 },
     visible: {
         opacity: 1,
         y: 0,
-        transition: { duration: 0.6, ease: easeInOut },
+        transition: { duration: 0.6, ease: easeOut },
     },
 };
 
-const SearchPage: React.FC = () => {
+const SearchResults: React.FC = () => {
     const [search, setSearch] = useState("");
     const [debouncedSearch, setDebouncedSearch] = useState("");
 
@@ -50,62 +62,6 @@ const SearchPage: React.FC = () => {
                 : Promise.resolve({ results: [] }),
         enabled: !!debouncedSearch,
     });
-
-    const {
-        data: topRatedData,
-        isLoading: isTopRatedLoading,
-        isError: isTopRatedError,
-        error: topRatedError,
-    } = useQuery({
-        queryKey: ["topRatedMovies"],
-        queryFn: getTopRatedMovies,
-        enabled: !search,
-    });
-
-    const {
-        data: recentData,
-        isLoading: isRecentLoading,
-        isError: isRecentError,
-        error: recentError,
-    } = useQuery({
-        queryKey: ["recentMovies"],
-        queryFn: getRecentMovies,
-        enabled: !search,
-    });
-
-    const {
-        data: popularData,
-        isLoading: isPopularLoading,
-        isError: isPopularError,
-        error: popularError,
-    } = useQuery({
-        queryKey: ["popularMovies"],
-        queryFn: getPopularMovies,
-        enabled: !search,
-    });
-
-    const nowPlayingMovies = recentData?.results ? recentData.results : [];
-
-    type TMDBMovie = {
-        id: number;
-        title: string;
-        poster_path: string | null;
-        backdrop_path?: string | null;
-        release_date: string;
-        vote_average: number;
-        overview?: string;
-        genre_ids?: number[];
-    };
-
-    const popularMovies: TMDBMovie[] = popularData?.results
-        ? popularData.results
-        : [];
-    const topRatedMovies: TMDBMovie[] = topRatedData?.results
-        ? topRatedData.results
-        : [];
-    const recentMovies: TMDBMovie[] = recentData?.results
-        ? recentData.results
-        : [];
 
     return (
         <motion.div
@@ -133,8 +89,6 @@ const SearchPage: React.FC = () => {
                 transition={{ duration: 10, repeat: Infinity }}
             />
 
-            {!search && <NowPlayingBanner movies={nowPlayingMovies} />}
-
             <motion.div
                 className="sticky top-5 z-50 flex justify-center mb-10"
                 initial={{ opacity: 0, y: -30 }}
@@ -157,55 +111,82 @@ const SearchPage: React.FC = () => {
                 </div>
             </motion.div>
 
-            {search ? (
-                <>
+            <motion.div variants={fadeUp} initial="hidden" animate="visible">
+                <h1 className="text-3xl font-bold tracking-tight mb-6">
+                    Search Results
+                </h1>
+            </motion.div>
+
+            {isSearchLoading && (
+                <div className="text-center text-blue-300 animate-pulse mt-20">
+                    Loading...
+                </div>
+            )}
+            {isSearchError && (
+                <div className="text-center mt-20 text-red-400">
+                    Error:{" "}
+                    {searchError instanceof Error
+                        ? searchError.message
+                        : "Failed to fetch movies."}
+                </div>
+            )}
+            {!isSearchLoading &&
+                !isSearchError &&
+                searchData?.results?.length === 0 && (
                     <motion.div
-                        variants={fadeUp}
+                        className="flex flex-col items-center justify-center mt-20"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                    >
+                        <NoResultsIcon
+                            style={{ fontSize: 80 }}
+                            className="text-gray-500 mb-4 animate-bounce"
+                        />
+                        <p className="text-xl text-gray-300">No movies found</p>
+                    </motion.div>
+                )}
+            {!isSearchLoading &&
+                !isSearchError &&
+                searchData?.results?.length > 0 && (
+                    <motion.div
+                        className="w-full"
                         initial="hidden"
                         animate="visible"
+                        key={searchData.results
+                            .map((m: TMDBMovie) => m.id)
+                            .join("-")}
                     >
-                        <h1 className="text-3xl font-bold tracking-tight mb-6">
-                            Search Results
-                        </h1>
+                        <motion.div
+                            className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6 items-stretch place-items-stretch"
+                            variants={{
+                                visible: {
+                                    transition: { staggerChildren: 0.09 },
+                                },
+                            }}
+                            initial="hidden"
+                            animate="visible"
+                            key={searchData.results
+                                .map((m: TMDBMovie) => m.id)
+                                .join("-")}
+                        >
+                            {searchData.results.map((movie: TMDBMovie) => (
+                                <motion.div
+                                    key={movie.id}
+                                    variants={cardMotion}
+                                    className="h-full w-full"
+                                >
+                                    <MovieCard
+                                        {...movie}
+                                        to={`/movie/${movie.id}`}
+                                        color="red"
+                                        small
+                                    />
+                                </motion.div>
+                            ))}
+                        </motion.div>
                     </motion.div>
-                    <SearchResults
-                        isLoading={isSearchLoading}
-                        isError={isSearchError}
-                        error={searchError}
-                        movies={searchData?.results || []}
-                    />
-                </>
-            ) : (
-                <>
-                    <MovieSection
-                        title="Recent Movies"
-                        color="red"
-                        movies={recentMovies}
-                        isLoading={isRecentLoading}
-                        isError={isRecentError}
-                        error={recentError}
-                        layout="row"
-                    />
-                    <MovieSection
-                        title="Popular Movies"
-                        color="blue"
-                        movies={popularMovies}
-                        isLoading={isPopularLoading}
-                        isError={isPopularError}
-                        error={popularError}
-                    />
-                    <MovieSection
-                        title="Top Rated Movies"
-                        color="yellow"
-                        movies={topRatedMovies}
-                        isLoading={isTopRatedLoading}
-                        isError={isTopRatedError}
-                        error={topRatedError}
-                    />
-                </>
-            )}
+                )}
         </motion.div>
     );
 };
-
-export default SearchPage;
+export default SearchResults;
