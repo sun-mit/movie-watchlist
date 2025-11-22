@@ -99,10 +99,10 @@ const SignUp: React.FC = () => {
                         type="text"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 pt-5 pb-2 text-white outline-none focus:bg-white/10 focus:border-purple-500 transition-all duration-300 peer placeholder-transparent"
+                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 pt-5 pb-2 text-white text-sm outline-none focus:bg-white/10 focus:border-purple-500 transition-all duration-300 peer placeholder-transparent"
                         placeholder="Name"
                     />
-                    <label className="absolute left-4 top-3.5 text-gray-400 text-xs transition-all duration-200 peer-placeholder-shown:text-sm peer-placeholder-shown:top-3.5 peer-focus:top-1.5 peer-focus:text-[10px] peer-focus:text-purple-400">
+                    <label className="absolute left-4 top-1.5 text-gray-400 text-[10px] transition-all duration-200 peer-placeholder-shown:text-xs peer-placeholder-shown:top-3.5 peer-focus:top-1.5 peer-focus:text-[9px] peer-focus:text-purple-400 bg-transparent px-1">
                         Name
                     </label>
                 </motion.div>
@@ -119,10 +119,10 @@ const SignUp: React.FC = () => {
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 pt-5 pb-2 text-white outline-none focus:bg-white/10 focus:border-purple-500 transition-all duration-300 peer placeholder-transparent"
+                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 pt-5 pb-2 text-white text-sm outline-none focus:bg-white/10 focus:border-purple-500 transition-all duration-300 peer placeholder-transparent"
                         placeholder="Email"
                     />
-                    <label className="absolute left-4 top-3.5 text-gray-400 text-xs transition-all duration-200 peer-placeholder-shown:text-sm peer-placeholder-shown:top-3.5 peer-focus:top-1.5 peer-focus:text-[10px] peer-focus:text-purple-400">
+                    <label className="absolute left-4 top-1.5 text-gray-400 text-[10px] transition-all duration-200 peer-placeholder-shown:text-xs peer-placeholder-shown:top-3.5 peer-focus:top-1.5 peer-focus:text-[9px] peer-focus:text-purple-400 bg-transparent px-1">
                         Email Address
                     </label>
                 </motion.div>
@@ -139,10 +139,10 @@ const SignUp: React.FC = () => {
                         type="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 pt-5 pb-2 text-white outline-none focus:bg-white/10 focus:border-purple-500 transition-all duration-300 peer placeholder-transparent"
+                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 pt-5 pb-2 text-white text-sm outline-none focus:bg-white/10 focus:border-purple-500 transition-all duration-300 peer placeholder-transparent"
                         placeholder="Password"
                     />
-                    <label className="absolute left-4 top-3.5 text-gray-400 text-xs transition-all duration-200 peer-placeholder-shown:text-sm peer-placeholder-shown:top-3.5 peer-focus:top-1.5 peer-focus:text-[10px] peer-focus:text-purple-400">
+                    <label className="absolute left-4 top-1.5 text-gray-400 text-[10px] transition-all duration-200 peer-placeholder-shown:text-xs peer-placeholder-shown:top-3.5 peer-focus:top-1.5 peer-focus:text-[9px] peer-focus:text-purple-400 bg-transparent px-1">
                         Password
                     </label>
                 </motion.div>
@@ -172,7 +172,7 @@ const SignUp: React.FC = () => {
                     <p>Already have an account?</p>
                     <a
                         href="/"
-                        className="hover:text-purple-400 transition-colors"
+                        className="font-bold text-purple-500 hover:text-purple-400 transition-colors underline underline-offset-2 drop-shadow"
                     >
                         Login
                     </a>
