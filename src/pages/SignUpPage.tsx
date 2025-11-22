@@ -87,7 +87,6 @@ const SignUp: React.FC = () => {
                 onSubmit={handleSignUp}
                 className="space-y-5"
             >
-                {/* Name */}
                 <motion.div
                     variants={{
                         hidden: { opacity: 0, y: 15 },
@@ -106,8 +105,6 @@ const SignUp: React.FC = () => {
                         Name
                     </label>
                 </motion.div>
-
-                {/* Email */}
                 <motion.div
                     variants={{
                         hidden: { opacity: 0, y: 15 },
@@ -126,8 +123,6 @@ const SignUp: React.FC = () => {
                         Email Address
                     </label>
                 </motion.div>
-
-                {/* Password */}
                 <motion.div
                     variants={{
                         hidden: { opacity: 0, y: 15 },
@@ -147,7 +142,6 @@ const SignUp: React.FC = () => {
                     </label>
                 </motion.div>
 
-                {/* Submit Button */}
                 <motion.div
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.97 }}
@@ -160,8 +154,6 @@ const SignUp: React.FC = () => {
                         <MdArrowForward className="transition-transform duration-300" />
                     </CustomButton>
                 </motion.div>
-
-                {/* Helper */}
                 <motion.div
                     variants={{
                         hidden: { opacity: 0, y: 10 },

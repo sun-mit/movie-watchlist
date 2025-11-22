@@ -90,7 +90,7 @@ const SearchResults: React.FC = () => {
             />
 
             <motion.div
-                className="sticky top-5 z-50 flex justify-center mb-10"
+                className="top-5 flex justify-center mb-10"
                 initial={{ opacity: 0, y: -30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8 }}
