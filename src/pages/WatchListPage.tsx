@@ -1,5 +1,6 @@
 import { useCallback, useState, type FC } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Loader from "../components/Loader";
 import Toast from "../components/Toast";
 import useAuthStore from "../store/authStore";
 import { getMovieDetails } from "../api/tmdbApi";
@@ -128,12 +129,12 @@ const Watchlist: FC = () => {
             </motion.h1>
             {isLoading ? (
                 <motion.div
-                    className="text-center text-blue-400 animate-pulse mt-20 text-xl font-semibold"
+                    className="flex justify-center items-center mt-20"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.7 }}
                 >
-                    Loading watchlist...
+                    <Loader />
                 </motion.div>
             ) : !Array.isArray(movies) || movies.length === 0 ? (
                 <motion.div

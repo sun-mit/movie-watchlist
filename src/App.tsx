@@ -1,4 +1,5 @@
 import React, { Suspense, lazy } from "react";
+import Loader from "./components/Loader";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import SearchResults from "./pages/SearchPage";
@@ -15,8 +16,8 @@ const App: React.FC = () => {
             <Navbar />
             <Suspense
                 fallback={
-                    <div className="text-center mt-20 text-white">
-                        Loading...
+                    <div className="flex justify-center items-center mt-20">
+                        <Loader />
                     </div>
                 }
             >

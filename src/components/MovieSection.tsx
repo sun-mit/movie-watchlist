@@ -1,4 +1,5 @@
 import React from "react";
+import Loader from "./Loader";
 import { motion } from "framer-motion";
 import AutoSlider from "./AutoSlider";
 import { MovieCard } from "../components/MovieCard";
@@ -69,8 +70,8 @@ const MovieSection: React.FC<MovieSectionProps> = ({
                 )}
             </motion.div>
             {isLoading ? (
-                <div className="text-center text-blue-300 animate-pulse mt-10">
-                    Loading...
+                <div className="flex justify-center items-center mt-10">
+                    <Loader />
                 </div>
             ) : isError ? (
                 <div className="text-center text-red-400 mt-10">

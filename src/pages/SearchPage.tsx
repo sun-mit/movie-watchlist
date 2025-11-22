@@ -1,5 +1,6 @@
 import { useState, useEffect, type FC } from "react";
 import { motion, easeOut } from "framer-motion";
+import Loader from "../components/Loader";
 import { MdSentimentDissatisfied, MdSearch } from "react-icons/md";
 import { MovieCard } from "../components/MovieCard";
 import { useQuery } from "@tanstack/react-query";
@@ -110,78 +111,123 @@ const SearchResults: FC = () => {
                 </div>
             </motion.div>
 
-            <motion.div variants={fadeUp} initial="hidden" animate="visible">
-                <h1 className="text-3xl font-bold tracking-tight mb-6">
-                    Search Results
-                </h1>
-            </motion.div>
-
-            {isSearchLoading && (
-                <div className="text-center text-blue-300 animate-pulse mt-20">
-                    Loading...
-                </div>
-            )}
-            {isSearchError && (
-                <div className="text-center mt-20 text-red-400">
-                    Error:{" "}
-                    {searchError instanceof Error
-                        ? searchError.message
-                        : "Failed to fetch movies."}
-                </div>
-            )}
-            {!isSearchLoading &&
-                !isSearchError &&
-                searchData?.results?.length === 0 && (
-                    <motion.div
-                        className="flex flex-col items-center justify-center mt-20"
+            {search.trim() === "" ? (
+                <motion.div
+                    className="flex flex-col items-center justify-center flex-1"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                >
+                    <motion.h2
+                        className="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 mb-6 drop-shadow-lg"
+                        initial={{ y: 0, opacity: 0 }}
+                        animate={{ y: [0, -8, 0, 8, 0], opacity: 1 }}
+                        transition={{
+                            y: {
+                                duration: 4,
+                                repeat: Infinity,
+                                repeatType: "reverse",
+                                ease: "easeInOut",
+                            },
+                            opacity: { duration: 1.5 },
+                        }}
+                    >
+                        Start typing to search movies
+                    </motion.h2>
+                    <motion.p
+                        className="text-lg text-blue-200"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
+                        transition={{ duration: 2, delay: 0.5 }}
                     >
-                        <MdSentimentDissatisfied className="text-gray-500 mb-4 animate-bounce text-7xl" />
-                        <p className="text-xl text-gray-300">No movies found</p>
-                    </motion.div>
-                )}
-            {!isSearchLoading &&
-                !isSearchError &&
-                searchData?.results?.length > 0 && (
+                        Discover your next favorite film!
+                    </motion.p>
+                </motion.div>
+            ) : (
+                <>
                     <motion.div
-                        className="w-full"
+                        variants={fadeUp}
                         initial="hidden"
                         animate="visible"
-                        key={searchData.results
-                            .map((m: TMDBMovie) => m.id)
-                            .join("-")}
                     >
-                        <motion.div
-                            className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6 items-stretch place-items-stretch"
-                            variants={{
-                                visible: {
-                                    transition: { staggerChildren: 0.09 },
-                                },
-                            }}
-                            initial="hidden"
-                            animate="visible"
-                            key={searchData.results
-                                .map((m: TMDBMovie) => m.id)
-                                .join("-")}
-                        >
-                            {searchData.results.map((movie: TMDBMovie) => (
-                                <motion.div
-                                    key={movie.id}
-                                    variants={cardMotion}
-                                    className="h-full w-full"
-                                >
-                                    <MovieCard
-                                        {...movie}
-                                        to={`/movie/${movie.id}`}
-                                        color="red"
-                                        small
-                                    />
-                                </motion.div>
-                            ))}
-                        </motion.div>
+                        <h1 className="text-3xl font-bold tracking-tight mb-6">
+                            Search Results
+                        </h1>
                     </motion.div>
-                )}
+
+                    {isSearchLoading && (
+                        <div className="flex justify-center items-center mt-20">
+                            <Loader />
+                        </div>
+                    )}
+                    {isSearchError && (
+                        <div className="text-center mt-20 text-red-400">
+                            Error:{" "}
+                            {searchError instanceof Error
+                                ? searchError.message
+                                : "Failed to fetch movies."}
+                        </div>
+                    )}
+                    {!isSearchLoading &&
+                        !isSearchError &&
+                        searchData?.results?.length === 0 && (
+                            <motion.div
+                                className="flex flex-col items-center justify-center mt-20"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                            >
+                                <MdSentimentDissatisfied className="text-gray-500 mb-4 animate-bounce text-7xl" />
+                                <p className="text-xl text-gray-300">
+                                    No movies found
+                                </p>
+                            </motion.div>
+                        )}
+                    {!isSearchLoading &&
+                        !isSearchError &&
+                        searchData?.results?.length > 0 && (
+                            <motion.div
+                                className="w-full"
+                                initial="hidden"
+                                animate="visible"
+                                key={searchData.results
+                                    .map((m: TMDBMovie) => m.id)
+                                    .join("-")}
+                            >
+                                <motion.div
+                                    className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6 items-stretch place-items-stretch"
+                                    variants={{
+                                        visible: {
+                                            transition: {
+                                                staggerChildren: 0.09,
+                                            },
+                                        },
+                                    }}
+                                    initial="hidden"
+                                    animate="visible"
+                                    key={searchData.results
+                                        .map((m: TMDBMovie) => m.id)
+                                        .join("-")}
+                                >
+                                    {searchData.results.map(
+                                        (movie: TMDBMovie) => (
+                                            <motion.div
+                                                key={movie.id}
+                                                variants={cardMotion}
+                                                className="h-full w-full"
+                                            >
+                                                <MovieCard
+                                                    {...movie}
+                                                    to={`/movie/${movie.id}`}
+                                                    color="red"
+                                                    small
+                                                />
+                                            </motion.div>
+                                        )
+                                    )}
+                                </motion.div>
+                            </motion.div>
+                        )}
+                </>
+            )}
         </motion.div>
     );
 };
