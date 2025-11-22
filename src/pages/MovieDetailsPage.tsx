@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, type FC } from "react";
 import { motion } from "framer-motion";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -6,7 +6,7 @@ import { getMovieDetails, getMovieTrailer } from "../api/tmdbApi";
 import { useQuery as useVideoQuery } from "@tanstack/react-query";
 import useAuthStore from "../store/authStore";
 
-const MovieDetails: React.FC = () => {
+const MovieDetails: FC = () => {
     const titleRef = useRef<HTMLHeadingElement>(null);
 
     const { id } = useParams<{ id: string }>();

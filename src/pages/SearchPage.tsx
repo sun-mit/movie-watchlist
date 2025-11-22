@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, type FC } from "react";
 import { motion, easeOut } from "framer-motion";
 import { MdSentimentDissatisfied, MdSearch } from "react-icons/md";
 import { MovieCard } from "../components/MovieCard";
@@ -35,7 +35,7 @@ const fadeUp = {
     },
 };
 
-const SearchResults: React.FC = () => {
+const SearchResults: FC = () => {
     const [search, setSearch] = useState("");
     const [debouncedSearch, setDebouncedSearch] = useState("");
 

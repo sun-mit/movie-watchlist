@@ -1,4 +1,4 @@
-import React from "react";
+import { useCallback, useState, type FC } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Toast from "../components/Toast";
 import useAuthStore from "../store/authStore";
@@ -14,16 +14,15 @@ type Movie = {
     vote_average?: number;
 };
 
-const Watchlist: React.FC = () => {
+const Watchlist: FC = () => {
     const { user } = useAuthStore();
     const navigate = useNavigate();
 
-    // Get watchlist movie IDs for current user
-    const getWatchlistKey = React.useCallback(
+    const getWatchlistKey = useCallback(
         () => (user ? `watchlist_${user.email}` : null),
         [user]
     );
-    const getWatchlistIds = React.useCallback(() => {
+    const getWatchlistIds = useCallback(() => {
         const key = getWatchlistKey();
         if (!key) return [];
         return JSON.parse(localStorage.getItem(key) || "[]") as string[];
@@ -36,7 +35,7 @@ const Watchlist: React.FC = () => {
     } = useQuery<Movie[]>({
         queryKey: ["watchlistMovies", user?.email],
         queryFn: async () => {
-            const ids = Array.from(new Set(getWatchlistIds())); 
+            const ids = Array.from(new Set(getWatchlistIds()));
             const results: Movie[] = [];
             const seen = new Set<number>();
             for (const id of ids) {
@@ -61,7 +60,7 @@ const Watchlist: React.FC = () => {
         enabled: !!user,
     });
 
-    const [toast, setToast] = React.useState<{
+    const [toast, setToast] = useState<{
         message: string;
         type: "success" | "error";
     } | null>(null);
@@ -78,10 +77,9 @@ const Watchlist: React.FC = () => {
 
     return (
         <div className="min-h-screen w-full relative flex flex-col items-center justify-start text-white font-sans pt-24 overflow-x-hidden">
-   
             <div className="absolute inset-0 -z-20 animate-gradient-move bg-gradient-to-tr from-indigo-900 via-blue-800 to-pink-700 opacity-90" />
             <div className="absolute inset-0 -z-10 backdrop-blur-xl" />
-     
+
             <motion.div
                 className="absolute top-10 left-10 w-16 h-16 bg-pink-400/30 rounded-full blur-2xl pointer-events-none"
                 animate={{
@@ -250,7 +248,7 @@ const Watchlist: React.FC = () => {
                                         Remove
                                     </motion.button>
                                 </div>
-                        
+
                                 <motion.div
                                     className="absolute inset-0 pointer-events-none rounded-2xl group-hover:shadow-[0_0_40px_10px_rgba(236,72,153,0.18)] transition-all duration-300"
                                     initial={{ opacity: 0 }}
