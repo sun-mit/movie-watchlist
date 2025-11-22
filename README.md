@@ -1,6 +1,6 @@
 # Movie Watchlist
 
-A modern, responsive web app for managing your personal movie watchlist. Built with React, TypeScript, Vite, Tailwind CSS, Zustand, and MUI. Integrates with TMDB API for movie data.
+A modern, responsive web app for managing your personal movie watchlist. Built with React, TypeScript, Vite, Tailwind CSS, Zustand. Integrates with TMDB API for movie data.
 
 ## Features
 
@@ -12,7 +12,7 @@ A modern, responsive web app for managing your personal movie watchlist. Built w
 -   **Protected Routes**: Only authenticated users can access main features
 -   **State Management**: Zustand for global state
 -   **API Integration**: Axios for TMDB API requests
--   **Styling**: Tailwind CSS, MUI, and custom gradients
+-   **Styling**: Tailwind CSS, and custom gradients
 
 ## Tech Stack
 
