@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import useAuthStore from "../store/authStore";
 import Logo from "../assets/logo.svg";
+import { FiHome, FiSearch, FiBookmark } from "react-icons/fi";
 
 const Navbar: React.FC = () => {
     const { user, logout } = useAuthStore();
@@ -49,24 +50,37 @@ const Navbar: React.FC = () => {
                     {user && (
                         <>
                             <Link
+                                to="/home"
+                                className={`nav-link font-medium animated-link flex items-center gap-2 ${
+                                    location.pathname === "/home"
+                                        ? "text-blue-400 font-bold"
+                                        : ""
+                                }`}
+                            >
+                                <FiHome size={22} className="mb-[2px]" />
+                                <span className="text-lg">Home</span>
+                            </Link>
+                            <Link
                                 to="/search"
-                                className={`nav-link font-medium animated-link ${
+                                className={`nav-link font-medium animated-link flex items-center gap-2 ${
                                     location.pathname === "/search"
                                         ? "text-blue-400 font-bold"
                                         : ""
                                 }`}
                             >
-                                Search
+                                <FiSearch size={22} className="mb-[2px]" />
+                                <span className="text-lg">Search</span>
                             </Link>
                             <Link
                                 to="/watchlist"
-                                className={`nav-link font-medium animated-link ${
+                                className={`nav-link font-medium animated-link flex items-center gap-2 ${
                                     location.pathname === "/watchlist"
                                         ? "text-blue-400 font-bold"
                                         : ""
                                 }`}
                             >
-                                Watchlist
+                                <FiBookmark size={22} className="mb-[2px]" />
+                                <span className="text-lg">Watchlist</span>
                             </Link>
                             {/* Profile dropdown trigger */}
                             <div className="relative">

@@ -1,12 +1,13 @@
 import React, { Suspense, lazy } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
+import SearchResults from "./pages/SearchPage";
 import ProtectedRoute from "./components/ProtectedRoute";
-const SearchPage = lazy(() => import("./pages/SearchPage"));
-const MovieDetails = lazy(() => import("./pages/MovieDetails"));
+const SearchPage = lazy(() => import("./pages/HomePage"));
+const MovieDetails = lazy(() => import("./pages/MovieDetailsPage"));
 const Watchlist = lazy(() => import("./pages/WatchListPage"));
-const Login = lazy(() => import("./pages/Login"));
-const SignUp = lazy(() => import("./pages/SignUp"));
+const Login = lazy(() => import("./pages/LoginPage"));
+const SignUp = lazy(() => import("./pages/SignUpPage"));
 
 const App: React.FC = () => {
     return (
@@ -26,10 +27,18 @@ const App: React.FC = () => {
 
                     {/* Protected */}
                     <Route
-                        path="/search"
+                        path="/home"
                         element={
                             <ProtectedRoute>
                                 <SearchPage />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/search"
+                        element={
+                            <ProtectedRoute>
+                                <SearchResults />
                             </ProtectedRoute>
                         }
                     />
