@@ -1,15 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { getMovieDetails } from "../api/tmdbApi";
+import { getMovieDetails, getMovieTrailer } from "../api/tmdbApi";
+import { useQuery as useVideoQuery } from "@tanstack/react-query";
 import useAuthStore from "../store/authStore";
 
 const MovieDetails: React.FC = () => {
+    const titleRef = useRef<HTMLHeadingElement>(null);
+
     const { id } = useParams<{ id: string }>();
-    const navigate = useNavigate();
     const { user } = useAuthStore();
-    // Watchlist state in localStorage per user
+
     const getInitialWatchlist = () => {
         if (!user || !id) return false;
         const key = user ? `watchlist_${user.email}` : null;
@@ -17,13 +19,9 @@ const MovieDetails: React.FC = () => {
         return list.includes(id);
     };
     const [inWatchlist, setInWatchlist] = useState(getInitialWatchlist());
-    // Helper: get key for current user
+
     const getWatchlistKey = () => (user ? `watchlist_${user.email}` : null);
 
-    // Check if movie is in watchlist
-    // No useEffect needed for watchlist state
-
-    // Toggle watchlist
     const handleToggleWatchlist = () => {
         if (!user || !id) return;
         const key = getWatchlistKey();
@@ -49,12 +47,41 @@ const MovieDetails: React.FC = () => {
         enabled: !!id,
     });
 
+    const { data: trailer } = useVideoQuery({
+        queryKey: ["movieTrailer", id],
+        queryFn: () => (id ? getMovieTrailer(id) : null),
+        enabled: !!id,
+    });
+
+    const trailerSectionRef = useRef<HTMLDivElement>(null);
+    useEffect(() => {
+        if (titleRef.current) {
+            titleRef.current.scrollIntoView({
+                behavior: "smooth",
+                block: "center",
+            });
+        }
+    }, []);
+
+    useEffect(() => {
+        if (trailerSectionRef.current && trailer) {
+            trailerSectionRef.current.scrollIntoView({
+                behavior: "smooth",
+                block: "center",
+            });
+        }
+    }, [trailer]);
+
     return (
-        <div className="min-h-screen w-full relative flex flex-col text-white font-sans p-6 pt-24">
-            {/* Vibrant Gradient & Glassmorphism Background */}
+        <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="min-h-screen w-full relative flex flex-col text-white font-sans p-6 pt-24"
+        >
             <div className="absolute inset-0 -z-10 bg-gradient-to-br from-blue-900 via-purple-900 to-pink-700 opacity-90" />
             <div className="absolute inset-0 -z-10 backdrop-blur-2xl" />
-            {/* Decorative Glow */}
+
             <div className="absolute top-0 left-0 w-80 h-80 bg-blue-500/30 rounded-full blur-3xl pointer-events-none" />
             <div className="absolute bottom-0 right-0 w-80 h-80 bg-pink-500/20 rounded-full blur-3xl pointer-events-none" />
             {isLoading && (
@@ -70,14 +97,35 @@ const MovieDetails: React.FC = () => {
                         : "Failed to fetch movie details."}
                 </div>
             )}
+
             {movie && (
-                <div className="flex flex-col md:flex-row gap-8 items-center justify-center">
-                    {/* Animated Poster */}
+                <motion.div
+                    initial={{ opacity: 0, y: 40 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.7, ease: "easeOut" }}
+                    className="flex flex-col md:flex-row gap-8 md:items-center md:justify-center w-full"
+                    style={{
+                        alignItems: "stretch",
+                        justifyContent: "center",
+                        width: "100%",
+                    }}
+                >
                     <motion.div
                         initial={{ opacity: 0, scale: 0.95, y: 40 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         transition={{ duration: 0.7, ease: "easeOut" }}
-                        className="flex-shrink-0 w-full md:w-[420px] lg:w-[520px] rounded-3xl overflow-hidden shadow-2xl border border-gray-800 bg-black/60"
+                        whileHover={{
+                            scale: 1.03,
+                            boxShadow: "0 0 40px #a78bfa",
+                        }}
+                        className="flex-shrink-0 w-full md:w-[420px] lg:w-[520px] rounded-3xl overflow-hidden shadow-2xl border-2 border-purple-400/40 bg-black/60 hover:shadow-purple-400/40 transition-all duration-300 md:self-center"
+                        style={{
+                            minHeight: "520px",
+                            maxHeight: "720px",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                        }}
                     >
                         <img
                             src={
@@ -86,12 +134,15 @@ const MovieDetails: React.FC = () => {
                                     : "https://via.placeholder.com/780x1200?text=No+Image"
                             }
                             alt={movie.title}
-                            className="w-full h-full object-cover"
-                            style={{ minHeight: "520px", maxHeight: "720px" }}
+                            className="w-full h-full object-cover rounded-2xl"
+                            style={{
+                                minHeight: "520px",
+                                maxHeight: "720px",
+                                boxShadow: "0 8px 32px 0 rgba(80,0,120,0.25)",
+                            }}
                         />
                     </motion.div>
 
-                    {/* Animated Details */}
                     <motion.div
                         initial={{ opacity: 0, x: 60 }}
                         animate={{ opacity: 1, x: 0 }}
@@ -100,7 +151,8 @@ const MovieDetails: React.FC = () => {
                             ease: "easeOut",
                             delay: 0.2,
                         }}
-                        className="flex-1 flex flex-col justify-center"
+                        className="flex-1 flex flex-col justify-center items-start md:items-start md:self-center"
+                        style={{ minWidth: 0 }}
                     >
                         <motion.h1
                             initial={{ opacity: 0, y: 30 }}
@@ -111,6 +163,12 @@ const MovieDetails: React.FC = () => {
                                 delay: 0.3,
                             }}
                             className="text-5xl font-extrabold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-yellow-300 via-pink-400 to-blue-400 drop-shadow-lg"
+                            style={{
+                                marginBottom: "1.5rem",
+                                textAlign: "left",
+                                wordBreak: "break-word",
+                            }}
+                            ref={titleRef}
                         >
                             {movie.title}
                         </motion.h1>
@@ -185,6 +243,7 @@ const MovieDetails: React.FC = () => {
                                       .join(", ")
                                 : "N/A"}
                         </div>
+
                         <motion.div
                             initial={{ opacity: 0, y: 30 }}
                             animate={{ opacity: 1, y: 0 }}
@@ -203,7 +262,6 @@ const MovieDetails: React.FC = () => {
                             </span>
                         </motion.div>
 
-                        {/* Action Buttons */}
                         <motion.div
                             initial={{ opacity: 0, y: 30 }}
                             animate={{ opacity: 1, y: 0 }}
@@ -225,12 +283,6 @@ const MovieDetails: React.FC = () => {
                                     ? "Remove from Watchlist"
                                     : "Add to Watchlist"}
                             </button>
-                            <button
-                                onClick={() => navigate("/search")}
-                                className="bg-gray-700 hover:bg-gray-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg transition-all"
-                            >
-                                Go Back to Search
-                            </button>
                             {movie.homepage && (
                                 <a
                                     href={movie.homepage}
@@ -243,7 +295,88 @@ const MovieDetails: React.FC = () => {
                             )}
                         </motion.div>
                     </motion.div>
-                </div>
+
+                    {trailer ? (
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.1 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ duration: 1.2, ease: "easeOut" }}
+                            whileHover={{ scale: 1.05 }}
+                            className="mb-8 flex justify-start md:justify-start"
+                            style={{ width: "35%" }}
+                        >
+                            <motion.div
+                                ref={trailerSectionRef}
+                                initial={{
+                                    borderRadius: "50%",
+                                    scale: 0.1,
+                                    opacity: 0,
+                                }}
+                                animate={{
+                                    borderRadius: "2.5rem",
+                                    scale: 1,
+                                    opacity: 1,
+                                }}
+                                transition={{ duration: 1.2, ease: "easeOut" }}
+                                className="aspect-video overflow-hidden border-4 border-purple-400/60 bg-gradient-to-br from-purple-900/80 via-black/90 to-pink-700/80 flex items-center justify-center animate-fade-in backdrop-blur-2xl"
+                                style={{
+                                    width: "100%",
+                                    maxWidth: "600px",
+                                    minHeight: "220px",
+                                    maxHeight: "320px",
+                                    border: "4px solid #a78bfa",
+                                    position: "relative",
+                                    zIndex: 2,
+                                    boxShadow:
+                                        "0 0 60px #a78bfa, 0 8px 32px 0 rgba(80,0,120,0.25)",
+                                    transform: "translateY(-10px)",
+                                    marginLeft: "0",
+                                }}
+                            >
+                                <motion.iframe
+                                    width="100%"
+                                    height="100%"
+                                    src={`https://www.youtube.com/embed/${trailer.key}?autoplay=1&mute=0&enablejsapi=1&rel=0&controls=1`}
+                                    title="Trailer"
+                                    allow="autoplay; encrypted-media"
+                                    allowFullScreen
+                                    style={{
+                                        width: "100%",
+                                        height: "100%",
+                                        minHeight: "220px",
+                                        maxHeight: "320px",
+                                        borderRadius: "2rem",
+                                        background: "black",
+                                        boxShadow: "0 0 40px #a78bfa",
+                                    }}
+                                    initial={{
+                                        opacity: 0,
+                                        scale: 0.1,
+                                        borderRadius: "50%",
+                                    }}
+                                    animate={{
+                                        opacity: 1,
+                                        scale: 1,
+                                        borderRadius: "2rem",
+                                    }}
+                                    transition={{
+                                        duration: 1.2,
+                                        ease: "easeOut",
+                                    }}
+                                />
+                            </motion.div>
+                        </motion.div>
+                    ) : (
+                        <motion.div
+                            initial={{ opacity: 0, y: 30 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.7, ease: "easeOut" }}
+                            className="mb-8 text-center text-lg text-gray-400 font-semibold"
+                        >
+                            No trailer available for this movie.
+                        </motion.div>
+                    )}
+                </motion.div>
             )}
             <style>{`
                 @keyframes fade-in {
@@ -254,7 +387,7 @@ const MovieDetails: React.FC = () => {
                     animation: fade-in 0.7s cubic-bezier(.4,0,.2,1);
                 }
             `}</style>
-        </div>
+        </motion.div>
     );
 };
 
