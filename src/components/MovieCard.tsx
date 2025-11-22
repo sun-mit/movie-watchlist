@@ -1,4 +1,5 @@
-import React from "react";
+import { useState, type MouseEvent } from "react";
+import type { FC } from "react";
 import { Link } from "react-router-dom";
 import { FaStar } from "react-icons/fa";
 import { FaBookmark } from "react-icons/fa";
@@ -31,7 +32,7 @@ const colorMap = {
     },
 };
 
-export const MovieCard: React.FC<MovieCardProps> = ({
+export const MovieCard: FC<MovieCardProps> = ({
     id,
     title,
     poster_path,
@@ -49,12 +50,12 @@ export const MovieCard: React.FC<MovieCardProps> = ({
 
     const { user } = useAuthStore();
     const watchlistKey = user ? `watchlist_${user.email}` : null;
-    const [inWatchlist, setInWatchlist] = React.useState(() => {
+    const [inWatchlist, setInWatchlist] = useState(() => {
         if (!watchlistKey) return false;
         const ids = JSON.parse(localStorage.getItem(watchlistKey) || "[]");
         return ids.includes(id.toString());
     });
-    const handleToggleWatchlist = (e: React.MouseEvent) => {
+    const handleToggleWatchlist = (e: MouseEvent) => {
         e.preventDefault();
         if (!watchlistKey) return;
         let ids = JSON.parse(localStorage.getItem(watchlistKey) || "[]");
@@ -203,7 +204,6 @@ export const MovieCard: React.FC<MovieCardProps> = ({
                         : ""
                 }`}
             >
-
                 {!hideActions && !small && (
                     <button
                         className="absolute top-2 right-2 z-10 bg-transparent border-none p-0 m-0 cursor-pointer"
@@ -314,10 +314,8 @@ export const MovieCard: React.FC<MovieCardProps> = ({
                             {!hideActions && !small && (
                                 <Link
                                     to={to}
-                                    className="inline-block mt-1 px-4 py-2 rounded-lg border border-blue-300/30 text-white font-bold transition-all text-sm hover:bg-blue-500/80 hover:text-blue-100 hover:shadow-lg"
+                                    className="inline-block mt-1 px-4 py-2 rounded-lg border border-yellow-100/10 text-white font-bold transition-all text-sm bg-transparent hover:bg-gradient-to-r hover:from-blue-800 hover:via-purple-800 hover:to-pink-800 hover:text-white hover:shadow-lg"
                                     style={{
-                                        background: "transparent",
-                                        boxShadow: "none",
                                         letterSpacing: "0.03em",
                                         width: "100%",
                                         display: "block",
