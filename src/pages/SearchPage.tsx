@@ -1,9 +1,10 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
     getPopularMovies,
     getTopRatedMovies,
     getRecentMovies,
+    searchMovies,
 } from "../api/tmdbApi";
 import NowPlayingBanner from "../components/NowPlayingBanner";
 import { Search as SearchIcon } from "@mui/icons-material";
@@ -14,7 +15,6 @@ import SearchResults from "../components/SearchResults";
 
 import { motion, easeInOut } from "framer-motion";
 
-// Fade-up animation for sections
 const fadeUp = {
     hidden: { opacity: 0, y: 40 },
     visible: {
@@ -27,14 +27,7 @@ const fadeUp = {
 const SearchPage: React.FC = () => {
     const [search, setSearch] = useState("");
     const [debouncedSearch, setDebouncedSearch] = useState("");
-    const [liveSearchResults, setLiveSearchResults] = useState<TMDBMovie[]>([]);
-    const [isLiveSearchLoading, setIsLiveSearchLoading] = useState(false);
-    const [liveSearchError, setLiveSearchError] = useState<unknown>(null);
-    const cancelTokenRef = useRef<import("axios").CancelTokenSource | null>(
-        null
-    );
 
-    // Debounce search input
     useEffect(() => {
         const handler = setTimeout(() => {
             setDebouncedSearch(search);
@@ -44,52 +37,19 @@ const SearchPage: React.FC = () => {
         };
     }, [search]);
 
-    // Live search effect
-    useEffect(() => {
-        let isCurrent = true;
-        if (!debouncedSearch) {
-            setLiveSearchResults([]);
-            setIsLiveSearchLoading(false);
-            setLiveSearchError(null);
-            return;
-        }
-        setIsLiveSearchLoading(true);
-        setLiveSearchError(null);
-        (async () => {
-            // Cancel previous request
-            if (cancelTokenRef.current) {
-                cancelTokenRef.current.cancel();
-            }
-            const axios = (await import("axios")).default;
-            cancelTokenRef.current = axios.CancelToken.source();
-            try {
-                const response = await axios.get(
-                    `https://api.themoviedb.org/3/search/movie`,
-                    {
-                        params: {
-                            api_key: import.meta.env.VITE_TMDB_API_KEY,
-                            query: debouncedSearch,
-                        },
-                        cancelToken: cancelTokenRef.current.token,
-                    }
-                );
-                if (isCurrent) {
-                    setLiveSearchResults(response.data.results || []);
-                }
-            } catch (error: unknown) {
-                if (axios.isCancel(error)) {
-                    if (isCurrent) setLiveSearchResults([]);
-                } else {
-                    if (isCurrent) setLiveSearchError(error);
-                }
-            } finally {
-                if (isCurrent) setIsLiveSearchLoading(false);
-            }
-        })();
-        return () => {
-            isCurrent = false;
-        };
-    }, [debouncedSearch]);
+    const {
+        data: searchData,
+        isLoading: isSearchLoading,
+        isError: isSearchError,
+        error: searchError,
+    } = useQuery({
+        queryKey: ["searchMovies", debouncedSearch],
+        queryFn: () =>
+            debouncedSearch
+                ? searchMovies(debouncedSearch)
+                : Promise.resolve({ results: [] }),
+        enabled: !!debouncedSearch,
+    });
 
     const {
         data: topRatedData,
@@ -113,7 +73,6 @@ const SearchPage: React.FC = () => {
         enabled: !search,
     });
 
-
     const {
         data: popularData,
         isLoading: isPopularLoading,
@@ -125,7 +84,6 @@ const SearchPage: React.FC = () => {
         enabled: !search,
     });
 
-    // Now Playing Movies (for banner)
     const nowPlayingMovies = recentData?.results ? recentData.results : [];
 
     type TMDBMovie = {
@@ -164,7 +122,6 @@ const SearchPage: React.FC = () => {
 
             <div className="absolute inset-0 -z-10 backdrop-blur-2xl" />
 
-            {/* Floating Blobs */}
             <motion.div
                 className="absolute top-10 left-10 w-72 h-72 bg-blue-500/20 rounded-full blur-3xl"
                 animate={{ y: [0, -20, 0], x: [0, 20, 0] }}
@@ -176,10 +133,8 @@ const SearchPage: React.FC = () => {
                 transition={{ duration: 10, repeat: Infinity }}
             />
 
-            {/* Now Playing Banner */}
             {!search && <NowPlayingBanner movies={nowPlayingMovies} />}
 
-            {/* Sticky Search Bar */}
             <motion.div
                 className="sticky top-5 z-50 flex justify-center mb-10"
                 initial={{ opacity: 0, y: -30 }}
@@ -202,7 +157,6 @@ const SearchPage: React.FC = () => {
                 </div>
             </motion.div>
 
-            {/* SEARCH RESULTS */}
             {search ? (
                 <>
                     <motion.div
@@ -215,10 +169,10 @@ const SearchPage: React.FC = () => {
                         </h1>
                     </motion.div>
                     <SearchResults
-                        isLoading={isLiveSearchLoading}
-                        isError={!!liveSearchError}
-                        error={liveSearchError}
-                        movies={liveSearchResults}
+                        isLoading={isSearchLoading}
+                        isError={isSearchError}
+                        error={searchError}
+                        movies={searchData?.results || []}
                     />
                 </>
             ) : (
