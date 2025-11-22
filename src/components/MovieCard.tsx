@@ -12,6 +12,7 @@ export type MovieCardProps = {
     to: string;
     color?: "blue" | "yellow" | "red";
     hideActions?: boolean;
+    small?: boolean;
 };
 const colorMap = {
     blue: {
@@ -37,11 +38,12 @@ export const MovieCard: React.FC<MovieCardProps> = ({
     to,
     color = "blue",
     hideActions = false,
+    small = false,
 }) => {
     const colorStyles = colorMap[color];
     const cardClass = hideActions
-        ? `rounded-2xl overflow-hidden shadow-2xl transition-all duration-300 relative group animate-fade-in border bg-black flex flex-col cursor-pointer border-gray-900 ${colorStyles.shadow}`
-        : `rounded-2xl overflow-hidden shadow-2xl transform hover:scale-[1.08] hover:shadow-black/70 transition-all duration-300 relative group animate-fade-in border border-gray-900 bg-black flex flex-col cursor-pointer ${colorStyles.shadow}`;
+        ? `rounded-xl overflow-hidden shadow-xl transition-all duration-300 relative group animate-fade-in border bg-black flex flex-col cursor-pointer border-gray-900 ${colorStyles.shadow}`
+        : `rounded-xl overflow-hidden shadow-xl transform hover:scale-[1.04] hover:shadow-black/70 transition-all duration-300 relative group animate-fade-in border border-gray-900 bg-black flex flex-col cursor-pointer ${colorStyles.shadow}`;
     return (
         <Link
             key={id}
@@ -49,8 +51,8 @@ export const MovieCard: React.FC<MovieCardProps> = ({
             className={cardClass}
             style={{
                 aspectRatio: "2/3",
-                minHeight: "320px",
-                maxHeight: "460px",
+                minHeight: small ? "240px" : "320px",
+                maxHeight: small ? "340px" : "460px",
                 textDecoration: "none",
             }}
         >
@@ -68,43 +70,62 @@ export const MovieCard: React.FC<MovieCardProps> = ({
                             : "https://via.placeholder.com/400x600?text=No+Image"
                     }
                     alt={title}
-                    className="absolute inset-0 w-full h-full object-cover group-hover:opacity-95 rounded-2xl"
+                    className="absolute inset-0 w-full h-full object-cover group-hover:opacity-95 rounded-xl"
                     style={{
                         transition: "opacity 0.5s",
-                        minHeight: "320px",
-                        maxHeight: "380px",
+                        minHeight: small ? "240px" : "320px",
+                        maxHeight: small ? "300px" : "380px",
                     }}
                 />
                 {/* Glassy Rating Badge (Top Left) */}
                 <div
-                    className={`absolute top-4 left-4 bg-gradient-to-br from-white/30 via-white/10 to-white/5 backdrop-blur-xl px-4 py-2 rounded-xl text-base font-bold shadow-xl border border-white/40 flex items-center gap-2 ${colorStyles.badge}`}
+                    className={`absolute top-2 left-2 bg-gradient-to-br from-white/30 via-white/10 to-white/5 backdrop-blur-xl px-2 py-1 rounded-lg text-xs font-bold shadow-xl border border-white/40 flex items-center gap-1 ${colorStyles.badge}`}
                     style={{
                         color: color === "yellow" ? "#222" : "#fff",
-                        boxShadow: "0 4px 16px 0 rgba(0,0,0,0.18)",
+                        boxShadow: "0 2px 8px 0 rgba(0,0,0,0.18)",
                     }}
                 >
-                    <FaStar className="text-yellow-400 text-base" />
+                    <FaStar className="text-yellow-400 text-xs" />
                     {vote_average ? vote_average.toFixed(1) : "N/A"}
                 </div>
+                {/* Year badge for small card */}
+                {small && release_date && (
+                    <div
+                        className="absolute top-2 right-2 bg-black/70 text-gray-200 px-2 py-1 rounded-md text-xs font-semibold shadow"
+                        style={{ letterSpacing: "0.5px" }}
+                    >
+                        {release_date.slice(0, 4)}
+                    </div>
+                )}
                 {/* Title Overlay with Year */}
                 <div
-                    className="absolute bottom-0 left-0 w-full px-4 py-5 flex flex-col items-center justify-center bg-gradient-to-t from-black/95 via-black/70 to-transparent"
+                    className="absolute bottom-0 left-0 w-full px-2 py-2 flex flex-col items-center justify-center bg-gradient-to-t from-black/95 via-black/70 to-transparent"
                     style={{
                         wordBreak: "break-word",
-                        borderBottomLeftRadius: "1rem",
-                        borderBottomRightRadius: "1rem",
-                        fontSize: "0.95rem",
+                        borderBottomLeftRadius: "0.5rem",
+                        borderBottomRightRadius: "0.5rem",
+                        fontSize: small ? "0.75rem" : "0.95rem",
                     }}
                 >
-                    <span className="text-white text-xl font-extrabold tracking-wide shadow-lg mb-4">
-                        {title}
-                        {release_date && (
-                            <span className="text-gray-300 text-base font-semibold ml-2">
-                                ({release_date.slice(0, 4)})
-                            </span>
-                        )}
-                    </span>
-                    {!hideActions && (
+                    {small ? (
+                        <span
+                            className="text-white text-sm font-bold tracking-tight shadow mb-1 w-full truncate text-center"
+                            title={title}
+                            style={{ display: "block", maxWidth: "100%" }}
+                        >
+                            {title}
+                        </span>
+                    ) : (
+                        <span className="text-white text-xl font-extrabold tracking-wide shadow-lg mb-2">
+                            {title}
+                            {release_date && (
+                                <span className="text-gray-300 text-base font-semibold ml-1">
+                                    ({release_date.slice(0, 4)})
+                                </span>
+                            )}
+                        </span>
+                    )}
+                    {!hideActions && !small && (
                         <div className="flex gap-2">
                             <Link
                                 to={to}

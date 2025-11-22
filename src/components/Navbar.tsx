@@ -1,21 +1,21 @@
 import React, { useState } from "react";
-import { TbLogout } from "react-icons/tb";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import useAuthStore from "../store/authStore";
 import Logo from "../assets/logo.svg";
 
 const Navbar: React.FC = () => {
     const { user, logout } = useAuthStore();
     const navigate = useNavigate();
-    const [showConfirm, setShowConfirm] = useState(false);
+    const location = useLocation();
+    const [showProfileMenu, setShowProfileMenu] = useState(false);
 
-    const handleLogout = () => {
-        setShowConfirm(true);
+    const handleProfileClick = () => {
+        setShowProfileMenu((prev) => !prev);
     };
 
-    const confirmLogout = () => {
-        setShowConfirm(false);
+    const handleLogout = () => {
         logout();
+        setShowProfileMenu(false);
         navigate("/");
     };
 
@@ -34,46 +34,75 @@ const Navbar: React.FC = () => {
                     }
                 `}</style>
 
-                <Link
-                    to="/"
-                    className="flex items-center gap-3 drop-shadow-lg group"
-                >
+                <div className="flex items-center gap-3 drop-shadow-lg">
                     <img
                         src={Logo}
                         alt="Movie Watchlist Logo"
-                        className="w-9 h-9 transition-all duration-500 group-hover:scale-110 animate-logo-pop"
+                        className="w-9 h-9 transition-all duration-500 animate-logo-pop"
                     />
-                    <span className="text-2xl font-bold transition-all duration-500 group-hover:scale-110 group-hover:text-blue-400">
+                    <span className="text-2xl font-bold transition-all duration-500">
                         Movie Watchlist
                     </span>
-                </Link>
+                </div>
 
                 <div className="flex items-center space-x-4">
                     {user && (
                         <>
                             <Link
                                 to="/search"
-                                className="nav-link font-medium animated-link"
+                                className={`nav-link font-medium animated-link ${
+                                    location.pathname === "/search"
+                                        ? "text-blue-400 font-bold"
+                                        : ""
+                                }`}
                             >
                                 Search
                             </Link>
                             <Link
                                 to="/watchlist"
-                                className="nav-link font-medium animated-link"
+                                className={`nav-link font-medium animated-link ${
+                                    location.pathname === "/watchlist"
+                                        ? "text-blue-400 font-bold"
+                                        : ""
+                                }`}
                             >
                                 Watchlist
                             </Link>
+                            {/* Profile dropdown trigger */}
+                            <div className="relative">
+                                <button
+                                    onClick={handleProfileClick}
+                                    className="flex items-center gap-2 px-3 py-1 rounded-xl bg-white/10 focus:outline-none"
+                                >
+                                    <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-blue-600 text-white font-bold text-md">
+                                        {user.name
+                                            ? user.name.charAt(0).toUpperCase()
+                                            : "U"}
+                                    </span>
+                                    <span className="font-semibold text-base text-white drop-shadow-sm">
+                                        {user.name}
+                                    </span>
+                                </button>
+                                {showProfileMenu && (
+                                    <div className="absolute right-0 mt-2 w-56 bg-gray-900 text-white rounded-xl shadow-lg border border-white/10 z-50 animate-modal-bounce">
+                                        <div className="px-5 py-4 border-b border-white/10">
+                                            <div className="font-bold text-lg mb-1">
+                                                {user.name}
+                                            </div>
+                                            <div className="text-sm text-gray-300">
+                                                {user.email}
+                                            </div>
+                                        </div>
+                                        <button
+                                            onClick={handleLogout}
+                                            className="w-full text-left px-5 py-3 font-semibold text-red-500 hover:bg-red-600 hover:text-white rounded-b-xl transition-all"
+                                        >
+                                            Logout
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
                         </>
-                    )}
-
-                    {user && (
-                        <button
-                            onClick={handleLogout}
-                            className="p-2 rounded-full transition-all logout-animate"
-                            title="Logout"
-                        >
-                            <TbLogout className="w-6 h-6" />
-                        </button>
                     )}
                 </div>
 
@@ -120,51 +149,6 @@ const Navbar: React.FC = () => {
                     }
                 `}</style>
             </nav>
-
-            {showConfirm && (
-                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-[999] animate-fade-in">
-                    <div className="bg-gradient-to-br from-black/90 via-gray-900 to-gray-800 text-white rounded-2xl p-7 w-80 shadow-2xl border border-white/10 animate-modal-bounce">
-                        <h2 className="text-lg font-semibold mb-5 text-center">
-                            Are you sure you want to logout?
-                        </h2>
-
-                        <div className="flex gap-4 mt-3">
-                            <button
-                                onClick={() => setShowConfirm(false)}
-                                className="flex-1 py-2 rounded-lg bg-gray-700 text-gray-200 hover:bg-gray-600 transition-all border border-gray-600 hover:scale-105"
-                            >
-                                Cancel
-                            </button>
-
-                            <button
-                                onClick={confirmLogout}
-                                className="flex-1 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition-all border border-red-700 font-semibold hover:scale-105"
-                            >
-                                Logout
-                            </button>
-                        </div>
-                    </div>
-
-                    <style>{`
-                        @keyframes fadeIn {
-                            0% { opacity: 0; }
-                            100% { opacity: 1; }
-                        }
-                        .animate-fade-in {
-                            animation: fadeIn 0.25s ease-out forwards;
-                        }
-
-                        @keyframes modalBounce {
-                            0% { transform: scale(0.6) translateY(40px); opacity: 0; }
-                            60% { transform: scale(1.05) translateY(-10px); opacity: 1; }
-                            100% { transform: scale(1) translateY(0); }
-                        }
-                        .animate-modal-bounce {
-                            animation: modalBounce 0.45s cubic-bezier(.68,-0.55,.27,1.55) forwards;
-                        }
-                    `}</style>
-                </div>
-            )}
         </>
     );
 };

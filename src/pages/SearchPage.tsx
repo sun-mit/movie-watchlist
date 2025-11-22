@@ -1,19 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
-    searchMovies,
     getPopularMovies,
     getTopRatedMovies,
     getRecentMovies,
 } from "../api/tmdbApi";
 import NowPlayingBanner from "../components/NowPlayingBanner";
-import {
-    Search as SearchIcon,
-    SentimentDissatisfied as NoResultsIcon,
-} from "@mui/icons-material";
+import { Search as SearchIcon } from "@mui/icons-material";
 
-import { MovieCard } from "../components/MovieCard";
 import MovieSection from "../components/MovieSection";
+
+import SearchResults from "../components/SearchResults";
 
 import { motion, easeInOut } from "framer-motion";
 
@@ -27,18 +24,72 @@ const fadeUp = {
     },
 };
 
-// Fade-in for cards
-const cardMotion = {
-    hidden: { opacity: 0, scale: 0.9 },
-    visible: {
-        opacity: 1,
-        scale: 1,
-        transition: { duration: 0.4, ease: easeInOut },
-    },
-};
-
 const SearchPage: React.FC = () => {
     const [search, setSearch] = useState("");
+    const [debouncedSearch, setDebouncedSearch] = useState("");
+    const [liveSearchResults, setLiveSearchResults] = useState<TMDBMovie[]>([]);
+    const [isLiveSearchLoading, setIsLiveSearchLoading] = useState(false);
+    const [liveSearchError, setLiveSearchError] = useState<unknown>(null);
+    const cancelTokenRef = useRef<import("axios").CancelTokenSource | null>(
+        null
+    );
+
+    // Debounce search input
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            setDebouncedSearch(search);
+        }, 400);
+        return () => {
+            clearTimeout(handler);
+        };
+    }, [search]);
+
+    // Live search effect
+    useEffect(() => {
+        let isCurrent = true;
+        if (!debouncedSearch) {
+            setLiveSearchResults([]);
+            setIsLiveSearchLoading(false);
+            setLiveSearchError(null);
+            return;
+        }
+        setIsLiveSearchLoading(true);
+        setLiveSearchError(null);
+        (async () => {
+            // Cancel previous request
+            if (cancelTokenRef.current) {
+                cancelTokenRef.current.cancel();
+            }
+            const axios = (await import("axios")).default;
+            cancelTokenRef.current = axios.CancelToken.source();
+            try {
+                const response = await axios.get(
+                    `https://api.themoviedb.org/3/search/movie`,
+                    {
+                        params: {
+                            api_key: import.meta.env.VITE_TMDB_API_KEY,
+                            query: debouncedSearch,
+                        },
+                        cancelToken: cancelTokenRef.current.token,
+                    }
+                );
+                if (isCurrent) {
+                    setLiveSearchResults(response.data.results || []);
+                }
+            } catch (error: unknown) {
+                if (axios.isCancel(error)) {
+                    if (isCurrent) setLiveSearchResults([]);
+                } else {
+                    if (isCurrent) setLiveSearchError(error);
+                }
+            } finally {
+                if (isCurrent) setIsLiveSearchLoading(false);
+            }
+        })();
+        return () => {
+            isCurrent = false;
+        };
+    }, [debouncedSearch]);
 
     const {
         data: topRatedData,
@@ -62,17 +113,6 @@ const SearchPage: React.FC = () => {
         enabled: !search,
     });
 
-    const {
-        data: searchData,
-        isLoading: isSearchLoading,
-        isError: isSearchError,
-        error: searchError,
-    } = useQuery({
-        queryKey: ["searchMovies", search],
-        queryFn: () =>
-            search ? searchMovies(search) : Promise.resolve({ results: [] }),
-        enabled: !!search,
-    });
 
     const {
         data: popularData,
@@ -105,9 +145,6 @@ const SearchPage: React.FC = () => {
     const topRatedMovies: TMDBMovie[] = topRatedData?.results
         ? topRatedData.results
         : [];
-    const searchMoviesList: TMDBMovie[] = searchData?.results
-        ? searchData.results
-        : [];
     const recentMovies: TMDBMovie[] = recentData?.results
         ? recentData.results
         : [];
@@ -118,7 +155,6 @@ const SearchPage: React.FC = () => {
             animate={{ opacity: 1 }}
             className="min-h-screen w-full relative flex flex-col text-white font-sans p-6 pt-28 overflow-x-hidden"
         >
-            {/* Parallax Gradient Background */}
             <motion.div
                 className="absolute inset-0 -z-10 bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800 opacity-90"
                 animate={{ backgroundPosition: ["0% 0%", "100% 100%"] }}
@@ -161,21 +197,30 @@ const SearchPage: React.FC = () => {
                         onChange={(e) => setSearch(e.target.value)}
                         placeholder="Search movies..."
                         className="w-full pl-12 pr-4 py-4 text-lg rounded-2xl bg-gray-900/80 text-white shadow-xl border border-gray-700 focus:ring-2 focus:ring-blue-500 transition-all duration-200"
+                        autoComplete="off"
                     />
                 </div>
             </motion.div>
 
             {/* SEARCH RESULTS */}
             {search ? (
-                <motion.div
-                    variants={fadeUp}
-                    initial="hidden"
-                    animate="visible"
-                >
-                    <h1 className="text-3xl font-bold tracking-tight mb-6">
-                        Search Results
-                    </h1>
-                </motion.div>
+                <>
+                    <motion.div
+                        variants={fadeUp}
+                        initial="hidden"
+                        animate="visible"
+                    >
+                        <h1 className="text-3xl font-bold tracking-tight mb-6">
+                            Search Results
+                        </h1>
+                    </motion.div>
+                    <SearchResults
+                        isLoading={isLiveSearchLoading}
+                        isError={!!liveSearchError}
+                        error={liveSearchError}
+                        movies={liveSearchResults}
+                    />
+                </>
             ) : (
                 <>
                     <MovieSection
@@ -202,70 +247,7 @@ const SearchPage: React.FC = () => {
                         isLoading={isTopRatedLoading}
                         isError={isTopRatedError}
                         error={topRatedError}
-                        subtitle="Most Rating"
                     />
-                </>
-            )}
-
-            {search && (
-                <>
-                    {isSearchLoading && (
-                        <div className="text-center text-blue-300 animate-pulse mt-20">
-                            Loading...
-                        </div>
-                    )}
-                    {isSearchError && (
-                        <div className="text-center mt-20 text-red-400">
-                            Error:{" "}
-                            {searchError instanceof Error
-                                ? searchError.message
-                                : "Failed to fetch movies."}
-                        </div>
-                    )}
-                    {!isSearchLoading &&
-                        !isSearchError &&
-                        searchMoviesList.length === 0 && (
-                            <motion.div
-                                className="flex flex-col items-center justify-center mt-20"
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                            >
-                                <NoResultsIcon
-                                    style={{ fontSize: 80 }}
-                                    className="text-gray-500 mb-4 animate-bounce"
-                                />
-                                <p className="text-xl text-gray-300">
-                                    No movies found
-                                </p>
-                            </motion.div>
-                        )}
-                    {!isSearchLoading &&
-                        !isSearchError &&
-                        searchMoviesList.length > 0 && (
-                            <motion.div
-                                className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8"
-                                variants={{
-                                    visible: {
-                                        transition: { staggerChildren: 0.06 },
-                                    },
-                                }}
-                                initial="hidden"
-                                animate="visible"
-                            >
-                                {searchMoviesList.map((movie) => (
-                                    <motion.div
-                                        key={movie.id}
-                                        variants={cardMotion}
-                                    >
-                                        <MovieCard
-                                            {...movie}
-                                            to={`/movie/${movie.id}`}
-                                            color="red"
-                                        />
-                                    </motion.div>
-                                ))}
-                            </motion.div>
-                        )}
                 </>
             )}
         </motion.div>
