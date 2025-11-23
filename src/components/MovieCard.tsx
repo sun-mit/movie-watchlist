@@ -90,6 +90,25 @@ export const MovieCard: FC<MovieCardProps> = ({
                             : ""
                     }`}
                 >
+                    {/* Watchlist icon for small cards */}
+                    <button
+                        className="absolute top-2 right-2 z-10 bg-transparent border-none p-0 m-0 cursor-pointer"
+                        title={
+                            inWatchlist
+                                ? "Remove from Watchlist"
+                                : "Add to Watchlist"
+                        }
+                        onClick={handleToggleWatchlist}
+                        style={{ outline: "none" }}
+                    >
+                        <FaBookmark
+                            className={
+                                inWatchlist
+                                    ? "text-green-400 text-xl drop-shadow"
+                                    : "text-white text-xl hover:text-green-400 transition-colors drop-shadow"
+                            }
+                        />
+                    </button>
                     <img
                         src={
                             poster_path
@@ -140,53 +159,37 @@ export const MovieCard: FC<MovieCardProps> = ({
                             position: "absolute",
                         }}
                     >
-                        {small ? (
-                            <span
-                                className="text-white text-sm font-bold tracking-tight shadow mb-1 w-full truncate text-left"
-                                title={title}
-                                style={{ display: "block", maxWidth: "100%" }}
-                            >
-                                {title}
+                        <span
+                            className="text-white text-sm font-bold tracking-tight shadow mb-1 w-full truncate text-left"
+                            title={title}
+                            style={{ display: "block", maxWidth: "100%" }}
+                        >
+                            {title}
+                        </span>
+                        <Link
+                            to={to}
+                            className="inline-block mt-1 px-4 py-2 rounded-lg border border-yellow-100/10 text-white font-bold transition-all text-sm bg-transparent hover:bg-gradient-to-r hover:from-blue-800 hover:via-purple-800 hover:to-pink-800 hover:text-white hover:shadow-lg"
+                            style={{
+                                letterSpacing: "0.03em",
+                                width: "100%",
+                                display: "block",
+                            }}
+                        >
+                            <span className="flex items-center gap-2">
+                                <FiArrowRight className="w-4 h-4" />
+                                Details
                             </span>
-                        ) : (
-                            <div className="flex flex-col w-full">
-                                <div className="flex items-center w-full mb-1">
-                                    <span
-                                        className="text-white text-base sm:text-lg font-extrabold tracking-wide truncate flex-1"
-                                        title={title}
-                                        style={{
-                                            textShadow:
-                                                "0 4px 16px rgba(0,0,0,0.85), 0 1px 0 #fff",
-                                            display: "block",
-                                        }}
-                                    >
-                                        {title}
-                                    </span>
-                                    {release_date && (
-                                        <span
-                                            className="text-gray-300 text-sm font-semibold ml-2"
-                                            style={{
-                                                textShadow:
-                                                    "0 2px 8px #000, 0 1px 0 #fff",
-                                                background: "rgba(0,0,0,0.35)",
-                                                borderRadius: "0.25rem",
-                                                padding: "0 0.25rem",
-                                            }}
-                                        >
-                                            {release_date.slice(0, 4)}
-                                        </span>
-                                    )}
-                                </div>
-                            </div>
-                        )}
+                        </Link>
                     </div>
                 </div>
             </Link>
         );
     }
 
+    // Make big card fully clickable by wrapping in Link
     return (
-        <div
+        <Link
+            to={to}
             key={id}
             className={cardClass}
             style={{
@@ -194,6 +197,7 @@ export const MovieCard: FC<MovieCardProps> = ({
                 minHeight: small ? "240px" : "320px",
                 maxHeight: small ? "340px" : "460px",
                 textDecoration: "none",
+                display: "block",
             }}
         >
             <div
@@ -211,7 +215,10 @@ export const MovieCard: FC<MovieCardProps> = ({
                                 ? "Remove from Watchlist"
                                 : "Add to Watchlist"
                         }
-                        onClick={handleToggleWatchlist}
+                        onClick={(e) => {
+                            e.preventDefault();
+                            handleToggleWatchlist(e);
+                        }}
                         style={{ outline: "none" }}
                     >
                         <FaBookmark
@@ -311,8 +318,7 @@ export const MovieCard: FC<MovieCardProps> = ({
                                 )}
                             </div>
                             {!hideActions && !small && (
-                                <Link
-                                    to={to}
+                                <div
                                     className="inline-block mt-1 px-4 py-2 rounded-lg border border-yellow-100/10 text-white font-bold transition-all text-sm bg-transparent hover:bg-gradient-to-r hover:from-blue-800 hover:via-purple-800 hover:to-pink-800 hover:text-white hover:shadow-lg"
                                     style={{
                                         letterSpacing: "0.03em",
@@ -324,12 +330,12 @@ export const MovieCard: FC<MovieCardProps> = ({
                                         <FiArrowRight className="w-4 h-4" />
                                         Details
                                     </span>
-                                </Link>
+                                </div>
                             )}
                         </div>
                     )}
                 </div>
             </div>
-        </div>
+        </Link>
     );
 };
