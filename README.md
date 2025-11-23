@@ -88,4 +88,8 @@ movie-watchlist/
 
 -   `https://movie-watchlist-neon-eight.vercel.app/`
 
+## Resources
+
+-   [Google Drive File](https://drive.google.com/file/d/1WYWUb7OuICuxVbCcXZlph4X4K0LGA12U/view?usp=sharing)
+
 Made by Amit Roy (sun-mit)
