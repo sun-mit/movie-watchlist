@@ -118,7 +118,7 @@ const SearchResults: FC = () => {
                     animate={{ opacity: 1 }}
                 >
                     <motion.h2
-                        className="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 mb-6 drop-shadow-lg"
+                        className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 mb-4 sm:mb-6 drop-shadow-lg text-center px-2"
                         initial={{ y: 0, opacity: 0 }}
                         animate={{ y: [0, -8, 0, 8, 0], opacity: 1 }}
                         transition={{
@@ -134,7 +134,7 @@ const SearchResults: FC = () => {
                         Start typing to search movies
                     </motion.h2>
                     <motion.p
-                        className="text-lg text-blue-200"
+                        className="text-base sm:text-lg text-blue-200 text-center px-2"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ duration: 2, delay: 0.5 }}
