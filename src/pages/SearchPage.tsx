@@ -219,6 +219,7 @@ const SearchResults: FC = () => {
                                                     to={`/movie/${movie.id}`}
                                                     color="red"
                                                     small
+                                                    hideActions={true}
                                                 />
                                             </motion.div>
                                         )
