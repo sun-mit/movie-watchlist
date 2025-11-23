@@ -5,17 +5,25 @@ import CustomButton from "../components/CustomButton";
 import bgImage from "../assets/bgImg.png";
 import { useNavigate } from "react-router-dom";
 import useAuthStore from "../store/authStore";
+import ConfirmDialog from "../components/ConfirmDialog";
 import AuthCard from "../components/AuthCard";
 import { motion } from "framer-motion";
 
 const Login: React.FC = () => {
-    const { login } = useAuthStore();
+    const { login, user, logout } = useAuthStore();
     const navigate = useNavigate();
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [showPassword, setShowPassword] = useState(false);
+    const [showDialog, setShowDialog] = useState(false);
+
+    React.useEffect(() => {
+        if (user) {
+            setShowDialog(true);
+        }
+    }, [user]);
 
     const handleLogin = (e?: React.FormEvent) => {
         if (e) e.preventDefault();
@@ -32,6 +40,29 @@ const Login: React.FC = () => {
         setError("");
         navigate("/home");
     };
+
+    const handleConfirmLogout = () => {
+        logout();
+        setShowDialog(false);
+        navigate("/");
+    };
+
+    const handleCancelLogout = () => {
+        setShowDialog(false);
+        navigate("/home");
+    };
+
+    if (user) {
+        return (
+            <ConfirmDialog
+                open={showDialog}
+                title="Logout Confirmation"
+                message="You are already logged in. Do you want to logout?"
+                onConfirm={handleConfirmLogout}
+                onCancel={handleCancelLogout}
+            />
+        );
+    }
 
     return (
         <AuthCard

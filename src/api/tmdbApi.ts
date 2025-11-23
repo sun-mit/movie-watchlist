@@ -73,7 +73,7 @@ export const getRecentMovies = async () => {
     return response.data;
 };
 
-// Get videos (trailers) for a movie
+
 export const getMovieVideos = async (id: number | string) => {
     const response = await axios.get(`${TMDB_BASE_URL}/movie/${id}/videos`, {
         params: {
@@ -95,7 +95,7 @@ export const getSimilarMovies = async (movieId: string) => {
     return response.data.results || [];
 };
 
-// Get the YouTube trailer for a movie
+
 export const getMovieTrailer = async (movieId: string) => {
     const response = await axios.get(
         `${TMDB_BASE_URL}${END_POINTS.MOVIE_TRAILERS(movieId)}`,
@@ -106,7 +106,7 @@ export const getMovieTrailer = async (movieId: string) => {
         }
     );
     const videos = response.data.results;
-    // Find YouTube trailer
+  
     const trailer = videos?.find(
         (v: { type: string; site: string }) =>
             v.type === "Trailer" && v.site === "YouTube"
