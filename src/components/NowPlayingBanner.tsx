@@ -25,13 +25,18 @@ const NowPlayingBanner: React.FC<{ movies: TMDBMovie[] }> = ({ movies }) => {
 
     useEffect(() => {
         if (movies.length === 0) return;
+        // Pause auto-change when trailer is open
+        if (showTrailer) {
+            if (intervalRef.current) window.clearInterval(intervalRef.current);
+            return;
+        }
         intervalRef.current = window.setInterval(() => {
             setCurrent((prev) => (prev + 1) % movies.length);
         }, 5000);
         return () => {
             if (intervalRef.current) window.clearInterval(intervalRef.current);
         };
-    }, [movies]);
+    }, [movies, showTrailer]);
 
     const movie = movies.length > 0 ? movies[current] : null;
     const backdropUrl = movie?.backdrop_path
