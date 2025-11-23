@@ -54,7 +54,7 @@ movie-watchlist/
 
 1. **Clone the repo**
     ```bash
-    git clone git@github.com:sun-mit/movie-watchlist.git
+    git clone https://github.com/sun-mit/movie-watchlist.git
     cd movie-watchlist
     ```
 2. **Install dependencies**
@@ -83,5 +83,9 @@ movie-watchlist/
 ## Environment Variables
 
 -   `VITE_TMDB_API_KEY`: Your TMDB API key
+
+## Live link :
+
+-   `https://movie-watchlist-neon-eight.vercel.app/`
 
 Made by Amit Roy (sun-mit)
