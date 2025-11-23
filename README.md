@@ -82,7 +82,7 @@ movie-watchlist/
 
 ## Environment Variables
 
--   `VITE_TMDB_API_KEY`: Your TMDB API key
+-   `VITE_TMDB_API_KEY`: Your TMDB API key (included in my email)
 
 ## Live link :
 
