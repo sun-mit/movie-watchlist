@@ -1,17 +1,17 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, type FC } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import useAuthStore from "../store/authStore";
 import Logo from "../assets/logo.svg";
 import { FiHome, FiSearch, FiBookmark, FiMenu, FiLogOut } from "react-icons/fi";
 import { motion } from "framer-motion";
 
-const Navbar: React.FC = () => {
+const Navbar: FC = () => {
     const { user, logout } = useAuthStore();
     const navigate = useNavigate();
     const location = useLocation();
     const [showProfileMenu, setShowProfileMenu] = useState(false);
     const profileMenuRef = useRef<HTMLDivElement>(null);
-    // Close profile dropdown when clicking outside
+
     useEffect(() => {
         if (!showProfileMenu) return;
         function handleClickOutside(event: MouseEvent) {
@@ -215,33 +215,16 @@ const Navbar: React.FC = () => {
                                 {user.name}
                             </span>
                         </button>
+                        <button
+                            onClick={() => {
+                                handleLogout();
+                                setMobileMenuOpen(false);
+                            }}
+                            className="flex items-center gap-2 px-2 py-2 rounded-lg bg-red-600/70 text-red-100 font-semibold hover:bg-red-700/80 transition-all duration-200 justify-center"
+                        >
+                            <FiLogOut size={18} /> Logout
+                        </button>
                     </div>
-                </div>
-            )}
-
-            {user && showProfileMenu && (
-                <div className="sm:hidden fixed top-16 left-1/2 transform -translate-x-1/2 w-11/12 max-w-xs bg-gradient-to-br from-blue-600/70 via-blue-500/60 to-blue-400/60 text-white rounded-lg shadow-xl border border-blue-300 z-50 animate-fade-in">
-                    <div className="flex flex-col px-4 py-3 border-b border-blue-200">
-                        <div className="flex items-center gap-3 mb-1">
-                            <div className="w-9 h-9 rounded-full bg-blue-800 flex items-center justify-center text-lg font-bold shadow border-2 border-white/30">
-                                {user.name
-                                    ? user.name.charAt(0).toUpperCase()
-                                    : "U"}
-                            </div>
-                            <div className="font-bold text-base text-white">
-                                {user.name}
-                            </div>
-                        </div>
-                        <div className="text-xs text-blue-100 mb-0.5 break-all pl-2">
-                            {user.email}
-                        </div>
-                    </div>
-                    <button
-                        onClick={handleLogout}
-                        className="w-full flex items-center gap-2 px-4 py-2 font-semibold text-red-100 hover:bg-red-600/70 rounded-b-lg transition-all duration-200 text-sm justify-center"
-                    >
-                        <FiLogOut size={16} /> Logout
-                    </button>
                 </div>
             )}
         </nav>

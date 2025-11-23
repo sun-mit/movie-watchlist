@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState, type FC, type FormEvent } from "react";
 import { FaEye, FaEyeSlash, FaArrowRight } from "react-icons/fa";
 import { MdMovie } from "react-icons/md";
 import CustomButton from "../components/CustomButton";
@@ -9,23 +9,17 @@ import ConfirmDialog from "../components/ConfirmDialog";
 import AuthCard from "../components/AuthCard";
 import { motion } from "framer-motion";
 
-const Login: React.FC = () => {
+const Login: FC = () => {
     const { login, user, logout } = useAuthStore();
+    const [wasLoggedInOnMount] = useState(() => !!user);
     const navigate = useNavigate();
-
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [showPassword, setShowPassword] = useState(false);
-    const [showDialog, setShowDialog] = useState(false);
 
-    React.useEffect(() => {
-        if (user) {
-            setShowDialog(true);
-        }
-    }, [user]);
 
-    const handleLogin = (e?: React.FormEvent) => {
+    const handleLogin = (e?: FormEvent) => {
         if (e) e.preventDefault();
         if (!email || !password) {
             setError("Please enter both email and password.");
@@ -43,19 +37,17 @@ const Login: React.FC = () => {
 
     const handleConfirmLogout = () => {
         logout();
-        setShowDialog(false);
         navigate("/");
     };
 
     const handleCancelLogout = () => {
-        setShowDialog(false);
         navigate("/home");
     };
 
-    if (user) {
+    if (user && wasLoggedInOnMount) {
         return (
             <ConfirmDialog
-                open={showDialog}
+                open={true}
                 title="Logout Confirmation"
                 message="You are already logged in. Do you want to logout?"
                 onConfirm={handleConfirmLogout}
