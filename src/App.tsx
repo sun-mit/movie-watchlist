@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from "react";
+import { Suspense, lazy, type FC } from "react";
 import Loader from "./components/Loader";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
@@ -10,7 +10,7 @@ const Watchlist = lazy(() => import("./pages/WatchListPage"));
 const Login = lazy(() => import("./pages/LoginPage"));
 const SignUp = lazy(() => import("./pages/SignUpPage"));
 
-const App: React.FC = () => {
+const App: FC = () => {
     return (
         <Router>
             <Navbar />
@@ -22,11 +22,9 @@ const App: React.FC = () => {
                 }
             >
                 <Routes>
-                    {/* Public */}
                     <Route path="/" element={<Login />} />
                     <Route path="/signup" element={<SignUp />} />
 
-                    {/* Protected */}
                     <Route
                         path="/home"
                         element={

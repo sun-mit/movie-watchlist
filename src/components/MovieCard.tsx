@@ -69,7 +69,6 @@ export const MovieCard: FC<MovieCardProps> = ({
         localStorage.setItem(watchlistKey, JSON.stringify(ids));
     };
 
-    // If hideActions is true (used for grid/recent movies), wrap the card in a Link
     if (hideActions) {
         return (
             <Link

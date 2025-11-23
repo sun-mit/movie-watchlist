@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuthStore from "../store/authStore";
+import ConfirmDialog from "../components/ConfirmDialog";
 import { MdArrowForward, MdMovieFilter } from "react-icons/md";
 import stageBg from "../assets/bgImgSignUp.png";
 import CustomButton from "../components/CustomButton";
@@ -8,15 +9,22 @@ import AuthCard from "../components/AuthCard";
 import { motion } from "framer-motion";
 
 const SignUp: React.FC = () => {
-    const { register } = useAuthStore();
+    const { register, user, logout } = useAuthStore();
     const navigate = useNavigate();
 
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
+    const [showDialog, setShowDialog] = useState(false);
 
     const bgImage = stageBg;
+
+    React.useEffect(() => {
+        if (user) {
+            setShowDialog(true);
+        }
+    }, [user]);
 
     const handleSignUp = (e?: React.FormEvent) => {
         if (e) e.preventDefault();
@@ -32,6 +40,29 @@ const SignUp: React.FC = () => {
         setError("");
         navigate("/home");
     };
+
+    const handleConfirmLogout = () => {
+        logout();
+        setShowDialog(false);
+        navigate("/");
+    };
+
+    const handleCancelLogout = () => {
+        setShowDialog(false);
+        navigate("/home");
+    };
+
+    if (user) {
+        return (
+            <ConfirmDialog
+                open={showDialog}
+                title="Logout Confirmation"
+                message="You are already logged in. Do you want to logout?"
+                onConfirm={handleConfirmLogout}
+                onCancel={handleCancelLogout}
+            />
+        );
+    }
 
     return (
         <AuthCard

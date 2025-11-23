@@ -1,12 +1,11 @@
-// Centralized theme for colors and gradients
 export const theme = {
     colors: {
-        primary: "#2563eb", // blue-600
-        secondary: "#9333ea", // purple-600
-        accent: "#f59e42", // yellow-400
-        error: "#ef4444", // red-500
-        success: "#22c55e", // green-500
-        bgDark: "#0f172a", // slate-900
+        primary: "#2563eb",
+        secondary: "#9333ea",
+        accent: "#f59e42",
+        error: "#ef4444",
+        success: "#22c55e",
+        bgDark: "#0f172a",
         bgGradient:
             "bg-gradient-to-r from-slate-900 via-blue-900 to-purple-900",
     },
