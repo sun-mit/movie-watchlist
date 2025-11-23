@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState, type FC, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuthStore from "../store/authStore";
 import ConfirmDialog from "../components/ConfirmDialog";
@@ -8,7 +8,7 @@ import CustomButton from "../components/CustomButton";
 import AuthCard from "../components/AuthCard";
 import { motion } from "framer-motion";
 
-const SignUp: React.FC = () => {
+const SignUp: FC = () => {
     const { register, user, logout } = useAuthStore();
     const navigate = useNavigate();
 
@@ -16,17 +16,12 @@ const SignUp: React.FC = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
-    const [showDialog, setShowDialog] = useState(false);
+
+    const [wasLoggedInOnMount] = useState(() => !!user);
 
     const bgImage = stageBg;
 
-    React.useEffect(() => {
-        if (user) {
-            setShowDialog(true);
-        }
-    }, [user]);
-
-    const handleSignUp = (e?: React.FormEvent) => {
+    const handleSignUp = (e?: FormEvent) => {
         if (e) e.preventDefault();
         if (!name || !email || !password) {
             setError("Please fill all fields.");
@@ -43,19 +38,17 @@ const SignUp: React.FC = () => {
 
     const handleConfirmLogout = () => {
         logout();
-        setShowDialog(false);
         navigate("/");
     };
 
     const handleCancelLogout = () => {
-        setShowDialog(false);
         navigate("/home");
     };
 
-    if (user) {
+    if (user && wasLoggedInOnMount) {
         return (
             <ConfirmDialog
-                open={showDialog}
+                open={true}
                 title="Logout Confirmation"
                 message="You are already logged in. Do you want to logout?"
                 onConfirm={handleConfirmLogout}
