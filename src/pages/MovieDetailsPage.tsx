@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, type FC } from "react";
 import { motion } from "framer-motion";
+import Loader from "../components/Loader";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getMovieDetails, getMovieTrailer } from "../api/tmdbApi";
@@ -98,8 +99,8 @@ const MovieDetails: FC = () => {
             <div className="absolute top-0 left-0 w-40 h-40 sm:w-80 sm:h-80 bg-blue-500/30 rounded-full blur-3xl pointer-events-none" />
             <div className="absolute bottom-0 right-0 w-40 h-40 sm:w-80 sm:h-80 bg-pink-500/20 rounded-full blur-3xl pointer-events-none" />
             {isLoading && (
-                <div className="text-center mt-20 text-blue-400 animate-pulse">
-                    Loading movie details...
+                <div className="flex justify-center items-center mt-20">
+                    <Loader />
                 </div>
             )}
             {isError && (

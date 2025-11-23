@@ -49,20 +49,20 @@ const Navbar: React.FC = () => {
                 />
                 <motion.span
                     className="text-lg sm:text-2xl font-bold bg-gradient-to-r from-blue-500 via-purple-500 to-yellow-400 bg-clip-text text-transparent drop-shadow-lg"
-                    initial={{ opacity: 0, scale: 0.8 }}
+                    initial={{ opacity: 0, scale: 0.9 }}
                     animate={{
                         opacity: 1,
-                        scale: [1, 1.1, 1],
-                        backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
+                        scale: [1, 1.02, 1],
+                        backgroundPosition: ["0% 50%", "200% 50%", "0% 50%"],
                     }}
                     transition={{
-                        duration: 2,
+                        duration: 5,
                         repeat: Infinity,
                         repeatType: "loop",
                         ease: "easeInOut",
                     }}
                     style={{
-                        backgroundSize: "200% 200%",
+                        backgroundSize: "250% 250%",
                         display: "inline-block",
                     }}
                 >
@@ -131,25 +131,27 @@ const Navbar: React.FC = () => {
                                 </span>
                             </button>
                             {showProfileMenu && (
-                                <div className="absolute right-0 mt-2 w-48 max-w-xs bg-gradient-to-br from-blue-200 via-blue-400 to-blue-600 bg-blue-900/30 backdrop-blur-lg text-white rounded-2xl shadow-2xl border border-blue-300/40 z-50 animate-fade-in">
-                                    <div className="flex flex-col items-center px-4 py-4 border-b border-white/20">
-                                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 via-blue-400 to-blue-600 flex items-center justify-center text-lg font-bold shadow-lg mb-2 border-2 border-white/30">
-                                            {user.name
-                                                ? user.name
-                                                      .charAt(0)
-                                                      .toUpperCase()
-                                                : "U"}
+                                <div className="absolute right-0 mt-2 w-56 max-w-xs bg-gradient-to-br from-blue-600/70 via-blue-500/60 to-blue-400/60 text-white rounded-lg shadow-xl border border-blue-300 z-50 animate-fade-in">
+                                    <div className="flex flex-col px-4 py-3 border-b border-blue-200">
+                                        <div className="flex items-center gap-3 mb-1">
+                                            <div className="w-9 h-9 rounded-full bg-blue-800 flex items-center justify-center text-lg font-bold shadow border-2 border-white/30">
+                                                {user.name
+                                                    ? user.name
+                                                          .charAt(0)
+                                                          .toUpperCase()
+                                                    : "U"}
+                                            </div>
+                                            <div className="font-bold text-base text-white">
+                                                {user.name}
+                                            </div>
                                         </div>
-                                        <div className="font-bold text-base mb-1 text-blue-700 text-center drop-shadow">
-                                            {user.name}
-                                        </div>
-                                        <div className="text-xs text-gray-600 mb-1 break-all text-center">
+                                        <div className="text-xs text-blue-100 mb-0.5 break-all pl-2">
                                             {user.email}
                                         </div>
                                     </div>
                                     <button
                                         onClick={handleLogout}
-                                        className="w-full flex items-center gap-2 px-4 py-3 font-semibold text-red-500 hover:bg-red-500/20 rounded-b-2xl transition-all duration-200 text-sm justify-center"
+                                        className="w-full flex items-center gap-2 px-4 py-2 font-semibold text-red-100 hover:bg-red-600/70 rounded-b-lg transition-all duration-200 text-sm justify-center"
                                     >
                                         <FiLogOut size={16} /> Logout
                                     </button>
@@ -216,25 +218,27 @@ const Navbar: React.FC = () => {
                     </div>
                 </div>
             )}
-            {/* Mobile profile dropdown rendered outside mobile menu for visibility */}
+
             {user && showProfileMenu && (
-                <div className="sm:hidden fixed top-16 left-1/2 transform -translate-x-1/2 w-10/12 max-w-xs bg-gradient-to-br from-blue-200 via-blue-400 to-blue-600 bg-blue-900/30 backdrop-blur-lg text-white rounded-2xl shadow-2xl border border-blue-300/40 z-50 animate-fade-in">
-                    <div className="flex flex-col items-center px-4 py-4 border-b border-white/20">
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 via-blue-400 to-blue-600 flex items-center justify-center text-lg font-bold shadow-lg mb-2 border-2 border-white/30">
-                            {user.name
-                                ? user.name.charAt(0).toUpperCase()
-                                : "U"}
+                <div className="sm:hidden fixed top-16 left-1/2 transform -translate-x-1/2 w-11/12 max-w-xs bg-gradient-to-br from-blue-600/70 via-blue-500/60 to-blue-400/60 text-white rounded-lg shadow-xl border border-blue-300 z-50 animate-fade-in">
+                    <div className="flex flex-col px-4 py-3 border-b border-blue-200">
+                        <div className="flex items-center gap-3 mb-1">
+                            <div className="w-9 h-9 rounded-full bg-blue-800 flex items-center justify-center text-lg font-bold shadow border-2 border-white/30">
+                                {user.name
+                                    ? user.name.charAt(0).toUpperCase()
+                                    : "U"}
+                            </div>
+                            <div className="font-bold text-base text-white">
+                                {user.name}
+                            </div>
                         </div>
-                        <div className="font-bold text-base mb-1 text-blue-700 text-center drop-shadow">
-                            {user.name}
-                        </div>
-                        <div className="text-xs text-gray-600 mb-1 break-all text-center">
+                        <div className="text-xs text-blue-100 mb-0.5 break-all pl-2">
                             {user.email}
                         </div>
                     </div>
                     <button
                         onClick={handleLogout}
-                        className="w-full flex items-center gap-2 px-4 py-3 font-semibold text-red-500 hover:bg-red-500/20 rounded-b-2xl transition-all duration-200 text-sm justify-center"
+                        className="w-full flex items-center gap-2 px-4 py-2 font-semibold text-red-100 hover:bg-red-600/70 rounded-b-lg transition-all duration-200 text-sm justify-center"
                     >
                         <FiLogOut size={16} /> Logout
                     </button>

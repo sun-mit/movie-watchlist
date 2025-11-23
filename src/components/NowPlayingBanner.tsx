@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import Loader from "./Loader";
 import { motion, AnimatePresence } from "framer-motion";
 import { MdPlayArrow, MdInfo, MdClose } from "react-icons/md";
 import { getMovieVideos } from "../api/tmdbApi";
@@ -206,8 +207,8 @@ const NowPlayingBanner: React.FC<{ movies: TMDBMovie[] }> = ({ movies }) => {
                                 <MdClose size={28} />
                             </button>
                             {trailerLoading ? (
-                                <div className="text-white text-center py-20">
-                                    Loading trailer...
+                                <div className="flex justify-center items-center py-20">
+                                    <Loader />
                                 </div>
                             ) : trailerError ? (
                                 <div className="text-white text-center py-20">
