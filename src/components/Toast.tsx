@@ -22,11 +22,11 @@ const Toast: React.FC<ToastProps> = ({
     return (
         <div
             className={`fixed left-8 bottom-8 z-50 px-7 py-5 rounded-2xl shadow-2xl font-bold text-lg animate-toast-in transition-all duration-500 flex items-center gap-4
-                ${
-                    type === "success"
-                        ? "bg-gradient-to-r from-green-400 via-blue-400 to-purple-400 text-white border-2 border-green-300"
-                        : "bg-gradient-to-r from-red-500 via-pink-500 to-yellow-400 text-white border-2 border-red-300"
-                }
+                    ${
+                        type === "success"
+                            ? "bg-gradient-to-r from-green-700 via-blue-800 to-purple-900 text-white border-2 border-green-500/70 shadow-green-900/40"
+                            : "bg-gradient-to-r from-red-800 via-pink-700 to-yellow-700 text-white border-2 border-red-500/70 shadow-red-900/40"
+                    }
             `}
             style={{
                 minWidth: "240px",
